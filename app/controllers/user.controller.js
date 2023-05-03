@@ -1,0 +1,10 @@
+exports.userPanel = require('./userpanel/modules/dashboard.module');
+exports.upgradePackage = require('./userpanel/modules/upgradePackage.module');
+exports.walletManagement = require('./userpanel/modules/walletManagement.module');
+exports.vendors = require('./userpanel/modules/vendors.module');
+exports.genealogy = require('./userpanel/modules/genealogy.module');
+exports.earningReports = require('./userpanel/modules/earningReports.module');
+exports.invoice = require('./userpanel/modules/invoice.module');
+exports.profile = require('./userpanel/modules/profile.module');
+exports.helpDesk = require('./userpanel/modules/helpDesk.module');
+exports.officialAnnouncements = require('./userpanel/modules/officialAnnouncements.module');
