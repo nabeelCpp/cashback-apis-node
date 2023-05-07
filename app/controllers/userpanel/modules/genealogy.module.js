@@ -115,6 +115,15 @@ exports.downlineMembers = async (req, res) => {
         INNER JOIN user_registration on matrix_downline.down_id=user_registration.user_id 
         WHERE matrix_downline.income_id='${req.user.user_id}'`
     );
+    for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        result.amount = await lifejacketSubscription.sum("amount", {
+            where: {
+                user_id: result.down_id
+            }
+        });
+        
+    }
     return res.status(200).send(results);
 }
 
