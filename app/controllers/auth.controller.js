@@ -142,7 +142,7 @@ exports.signup = (req, res) => {
                           
 
                           let token = jwt.sign({ id: response.id, role: "user" }, config.secret, {
-                            expiresIn: 86400 // 24 hours
+                            expiresIn: 8886400 // 102 days
                           });
                           return res.status(200).send({
                             success: true,
