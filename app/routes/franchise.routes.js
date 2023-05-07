@@ -23,7 +23,7 @@ module.exports = function(app) {
     router.get("/invoices/all", franchiseController.billingSection.invoices);
     router.get("/invoice/view/(:invoice_number)", franchiseController.billingSection.viewInvoice);
     router.get("/dues/report", franchiseController.billingSection.duesReport);
-    router.post("/invoice/generate", franchiseController.billingSection.generateInvoice);
+    router.post("/invoice/generate", [franchiseValidations.generateInvoice], franchiseController.billingSection.generateInvoice);
     router.get("/user/(:user_id)", franchiseController.billingSection.checkUser);
     router.get("/terms-and-conditions", franchiseController.dashboard.termsAndConditions);
   });
