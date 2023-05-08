@@ -44,6 +44,8 @@ exports.signin = (req, res) => {
         data:{
           id: vendor.id,
           username: vendor.username,
+          first_name: vendor.first_name,
+          last_name: vendor.last_name,
           email: vendor.email,
           name: vendor.name,
           accessToken: token
