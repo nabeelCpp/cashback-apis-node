@@ -33,7 +33,9 @@ verifyToken = (req, res, next) => {
 
 isAdmin = (req, res, next) => {
   if(req.role == 'admin'){
-    Admin.findByPk(req.userId).then(admin => {
+    Admin.findByPk(req.userId, {
+      attributes: { exclude: ['password'] },
+    }).then(admin => {
       if(admin){
         req.admin = admin;
        next();
@@ -55,7 +57,9 @@ isAdmin = (req, res, next) => {
 
 isUser = (req, res, next) => {
   if(req.role == 'user'){
-    User.findByPk(req.userId).then(user => {
+    User.findByPk(req.userId, {
+      attributes: { exclude: ['password'] },
+    }).then(user => {
       if(user){
         req.user = user;
        next();
@@ -77,7 +81,9 @@ isUser = (req, res, next) => {
 
 isVendor = (req, res, next) => {
   if(req.role == 'vendor'){
-    Vendor.findByPk(req.userId).then(vendor => {
+    Vendor.findByPk(req.userId, {
+      attributes: { exclude: ['password'] },
+    }).then(vendor => {
       if(vendor){
         req.vendor = vendor;
        next();

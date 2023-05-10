@@ -12,7 +12,8 @@ var bcrypt = require("bcrypt");
 exports.signin = (req, res) => {
   Vendor.findOne({
     where: {
-      username: req.body.username
+      // username: req.body.username
+      email: req.body.email
     }
   })
     .then(vendor => {
@@ -43,6 +44,8 @@ exports.signin = (req, res) => {
         data:{
           id: vendor.id,
           username: vendor.username,
+          first_name: vendor.first_name,
+          last_name: vendor.last_name,
           email: vendor.email,
           name: vendor.name,
           accessToken: token

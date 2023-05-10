@@ -27,3 +27,20 @@ exports.bank = [
         next();
     }
 ]
+
+
+exports.generateInvoice = [
+    body('user_id', 'Userid is required').not().isEmpty(),
+    body('invoice_no', 'Invoice Number is required').not().isEmpty(),
+    body('products', "Atleast 1 product is required!").isArray({ min: 1 }),
+    body('products.*.name', "Product name is required").not().isEmpty(),
+    body('products.*.price', "Product price is required").not().isEmpty(),
+    body('products.*.qty', "Product qty is required").not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]

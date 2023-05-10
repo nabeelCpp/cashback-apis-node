@@ -44,7 +44,8 @@ exports.index = async (req, res) => {
 };
 
 exports.profile = async (req, res) => {
-    req.vendor.cmp_logo = `${logosPath}${req.vendor.cmp_logo}`;
+    req.vendor.cmp_logo = req.vendor.cmp_logo?`${process.env.BASE_URL}/uploads/cmplogo/${req.vendor.cmp_logo}`:'';
+    req.vendor.file = await req.vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`);
     return res.status(200).send(req.vendor);
 }
 
@@ -134,7 +135,7 @@ exports.updateLogo = async (req, res) => {
         }
         if(err) {
             return res.status(500).send({
-                status: false,
+                success: false,
                 message: "Error uploading Logo."
             });  
         }
@@ -156,9 +157,13 @@ exports.updateLogo = async (req, res) => {
                     }
                 });
             }
+            let vendor = await db.pocRegistration.findByPk(req.vendor.id);
+            vendor = vendor.getValues();
+            let cmp_logo = vendor.cmp_logo?`${process.env.BASE_URL}/uploads/cmplogo/${vendor.cmp_logo}`:'';
             return res.status(200).send({
-                status: true,
-                message: "Logo is updated successfully!"
+                success: true,
+                message: "Logo is updated successfully!",
+                cmp_logo: cmp_logo
             });  
         }
         return res.status(500).send({
@@ -208,7 +213,7 @@ exports.updateGallery = async (req, res) => {
         }
         if(err) {
             return res.status(500).send({
-                status: false,
+                success: false,
                 message: "Error uploading Logo."
             });  
         }
@@ -236,9 +241,13 @@ exports.updateGallery = async (req, res) => {
                     }
                 });
             })
+            let vendor = await db.pocRegistration.findByPk(req.vendor.id);
+            vendor = vendor.getValues();
+            let files = await vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`);
             return res.status(200).send({
-                status: true,
-                message: "Gallery updated successfully!"
+                success: true,
+                message: "Gallery updated successfully!",
+                files: files
             });  
         }
         return res.status(500).send({

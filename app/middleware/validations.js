@@ -133,7 +133,8 @@ exports.adminPanelLogin = [
 
 
 exports.franchisePanelLogin = [
-    body('username', 'Username is required').not().isEmpty(),
+    // body('username', 'Username is required').not().isEmpty(),
+    body('email', 'Email is required').isEmail(),
     body('password', 'Password is required').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
