@@ -56,7 +56,7 @@ exports.vendorServices = async(req, res) => {
     return res.status(200).send(services);
 }
 
-exports.makeid = async (length) => {
+exports.makeid = async (length=10) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;

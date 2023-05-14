@@ -65,6 +65,7 @@ exports.update = async (req, res) => {
     user.telephone = mobile;
     user.save();
     return res.status(200).send({
+        success: true,
         message: "Profile Updated successfully!"
     });
 }
@@ -80,6 +81,7 @@ exports.updateBankInfo = async (req, res) => {
     user.bank_state = bank_state;
     user.save();
     return res.status(200).send({
+        success: true,
         message: "Bank Details Updated successfully!"
     });
 }
@@ -92,13 +94,18 @@ exports.updatePassword = async (req, res) => {
         user.password
     );
 
+    // compare simple passwords
+    if(!passwordIsValid){
+        passwordIsValid = current_password == user.password ? true : false
+    }
+
     if (!passwordIsValid) {
         return res.status(401).send({
             message: "Invalid Current Password!"
         });
     }
 
-    if( bcrypt.compareSync(confirm_password,user.password) ){
+    if( bcrypt.compareSync(confirm_password,user.password) || current_password == user.password){
         return res.status(401).send({
             message: "New password must not be similar to current password. Please try another password!"
         });

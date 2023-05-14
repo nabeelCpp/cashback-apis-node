@@ -1,6 +1,10 @@
+const { body } = require("express-validator");
 const db = require("../../../models");
 const {pocRegistration, amountDetail, User, Vendor, eshopPurchaseDetail, dueClearRequest, pucCreditDebit, matrixDownline, creditDebit, lifejacketSubscription} = db;
 const Op = db.Sequelize.Op;
+const publicController = require("../../public.controller");
+const multer = require("multer");
+const payDuesProofPath = `${process.env.PROJECT_DIR}/franchisepanel/images/`;
 exports.invoices = async (req, res) => {
     const data = [];
     const invoices = await amountDetail.findAll({
@@ -493,4 +497,97 @@ exports.checkUser  = async (req, res) => {
             response : {}
         })
     }
+}
+
+
+exports.payDues  = async (req, res) => {
+    let body = req.body
+    let checkDueAmount = await pocRegistration.findOne({
+        where: {
+            user_id: req.vendor.user_id
+        }
+    })
+    checkDueAmount = checkDueAmount.getValues()
+    if(checkDueAmount.due_amount < body.amount ){
+        return res.status(400).send({
+            success: false,
+            message: "You can not pay more than due amount!"
+        })
+    }
+
+    if(body.amount == '' || body.amount == 0){
+        return res.status(400).send({
+            success: false,
+            message: "You can not pay this amount!"
+        })
+    }
+    let dueClearRequestData = {
+        user_id: req.vendor.user_id,
+        amount: body.amount,
+        status: 0, 
+        ts: publicController.currentDateTime, 
+        txn_id: req.vendor.user_id+'-'+publicController.makeid(7), 
+        payment_mode: body.payment_mode, 
+        admin_status: 0,
+        posted_date: publicController.currentDateTime
+    }
+    try {
+        let duepay = await dueClearRequest.create(dueClearRequestData);
+        return res.status(200).send({
+            success: true,
+            id: duepay.id,
+            message: "Due pay request submited successfully!"
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+}
+
+exports.payDuesProof  = async (req, res) => {
+    let id = body.params.id;
+    const storage =   multer.diskStorage({  
+        destination:  (req, file, callback) => {  
+          callback(null, payDuesProofPath);  
+        },
+        filename: (req, file, callback) => {
+          callback(null, `${Date.now()}-${file.originalname}`);  
+        }
+    });
+    var upload = multer({ storage : storage}).single('payment_proof');   
+    upload(req,res,async (err) => {
+        if(!req.file){
+            return res.status(403).send({
+                message: "No file selected."
+            })
+        }else if(req.file.mimetype){
+            const arr = req.file.mimetype.split('/');
+            if(arr[0] !== 'image'){
+                return res.status(203).send({
+                    success: false,
+                    message: 'Invalid filetype. Only images are allowed'
+                });
+            }
+        }
+        if(err) {
+            return res.status(500).send({
+                success: false,
+                message: "Error uploading Proof."
+            });  
+        }
+        let resp = await dueClearRequest.update({pay_proof: req.file.filename}, {
+            where: {
+                id: id
+            }
+        });
+        if(resp) {
+            return res.status(200).send({
+                success: true,
+                message: "Due pay request submited successfully!"
+            })  
+        }
+        return res.status(500).send({
+            success: false,
+            message: "Error while uploading pay proof"
+        });
+    });  
 }
