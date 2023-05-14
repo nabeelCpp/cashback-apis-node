@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         amount : {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         pay_proof : {
             type: Sequelize.STRING,
