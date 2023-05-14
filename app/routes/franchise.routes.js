@@ -26,5 +26,7 @@ module.exports = function(app) {
     router.post("/invoice/generate", [franchiseValidations.generateInvoice], franchiseController.billingSection.generateInvoice);
     router.get("/user/(:user_id)", franchiseController.billingSection.checkUser);
     router.get("/terms-and-conditions", franchiseController.dashboard.termsAndConditions);
+    router.post("/pay-dues", [franchiseValidations.payDues], franchiseController.billingSection.payDues );
+    router.put("/pay-dues/(:id)", franchiseController.billingSection.payDuesProof );
   });
 };
