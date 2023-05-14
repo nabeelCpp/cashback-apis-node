@@ -521,15 +521,16 @@ exports.payDues  = async (req, res) => {
             message: "You can not pay this amount!"
         })
     }
+    let txn_id = await publicController.makeid(7)
     let dueClearRequestData = {
         user_id: req.vendor.user_id,
         amount: body.amount,
         status: 0, 
-        ts: publicController.currentDateTime, 
-        txn_id: req.vendor.user_id+'-'+publicController.makeid(7), 
+        // ts: new Date().toISOString(), 
+        txn_id: req.vendor.user_id+'-'+txn_id, 
         payment_mode: body.payment_mode, 
         admin_status: 0,
-        posted_date: publicController.currentDateTime
+        posted_date: new Date().toISOString()
     }
     try {
         let duepay = await dueClearRequest.create(dueClearRequestData);
@@ -544,7 +545,7 @@ exports.payDues  = async (req, res) => {
 }
 
 exports.payDuesProof  = async (req, res) => {
-    let id = body.params.id;
+    let id = req.params.id;
     const storage =   multer.diskStorage({  
         destination:  (req, file, callback) => {  
           callback(null, payDuesProofPath);  
@@ -562,6 +563,7 @@ exports.payDuesProof  = async (req, res) => {
         }else if(req.file.mimetype){
             const arr = req.file.mimetype.split('/');
             if(arr[0] !== 'image'){
+                dueClearRequest.delete(id);
                 return res.status(203).send({
                     success: false,
                     message: 'Invalid filetype. Only images are allowed'
@@ -569,6 +571,7 @@ exports.payDuesProof  = async (req, res) => {
             }
         }
         if(err) {
+            dueClearRequest.delete(id);
             return res.status(500).send({
                 success: false,
                 message: "Error uploading Proof."
@@ -582,9 +585,10 @@ exports.payDuesProof  = async (req, res) => {
         if(resp) {
             return res.status(200).send({
                 success: true,
-                message: "Due pay request submited successfully!"
+                message: "Proof uploaded successfully!"
             })  
         }
+        dueClearRequest.delete(id);
         return res.status(500).send({
             success: false,
             message: "Error while uploading pay proof"
