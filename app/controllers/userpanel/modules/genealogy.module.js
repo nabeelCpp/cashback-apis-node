@@ -57,7 +57,7 @@ exports.treeView = async (req, res) => {
     data.root = {
         user_id: rootUser.user_id,
         user_rank_name: rootUser.user_rank_name,
-        image: 'images/male.jpg',
+        image: `${process.env.BASE_URL}/userpanel/images/male.jpg`,
         first_name: rootUser.first_name,
         last_name: rootUser.last_name,
         country: rootUser.country,
@@ -88,7 +88,7 @@ exports.treeView = async (req, res) => {
         const temp = {
             user_id: refUsers.user_id,
             user_rank_name: refUsers.user_rank_name,
-            image: 'images/male.jpg',
+            image: `${process.env.BASE_URL}/userpanel/images/male.jpg`,
             first_name: refUsers.first_name,
             last_name: refUsers.last_name,
             country: refUsers.country,

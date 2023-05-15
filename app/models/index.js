@@ -38,6 +38,7 @@ db.pucCreditDebit = require("../models/pucCreditDebit.model.js")(sequelize, Sequ
 db.withdrawRequest = require("../models/withdrawRequest.model.js")(sequelize, Sequelize);
 db.venderServices = require("./venderServices.model.js")(sequelize, Sequelize);
 db.pocRegistration = require("./pocRegistration.model.js")(sequelize, Sequelize);
+db.pocRegisterDetails = require("./pocRegistrationDetail.model.js")(sequelize, Sequelize);
 db.manageBvHistory = require("./manageBvHistory.model.js")(sequelize, Sequelize);
 db.levelIncomeBinary = require("./levelIncomeBinary.model.js")(sequelize, Sequelize);
 db.Tickets = require("./tickets.model.js")(sequelize, Sequelize);
