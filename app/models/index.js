@@ -50,4 +50,5 @@ db.States = require("./states.model.js")(sequelize, Sequelize);
 db.eshopPurchaseDetail = require("./eshopPurchaseDetail.model.js")(sequelize, Sequelize);
 db.dueClearRequest = require("./dueClearRequest.model.js")(sequelize, Sequelize);
 db.oldUserNames = require("./oldUserNames.model.js")(sequelize, Sequelize);
+db.statusMaintenancePuc = require("./statusMaintenancePuc.model.js")(sequelize, Sequelize);
 module.exports = db;

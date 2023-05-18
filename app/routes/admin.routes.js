@@ -30,5 +30,24 @@ module.exports = function(app) {
     router.put("/vendor/update/gallery/(:id)", adminController.vendorMgt.updateGallery);
     router.put("/vendor/update/logo/(:id)", adminController.vendorMgt.updateLogo);
     router.post("/vendor/create",[validations.adminPanel.createVendor], adminController.vendorMgt.create);
+    
+    // Revenue Report
+    router.get("/admin-revenue/report", adminController.adminRevenueReport)
+    // Commision Mgt
+    router.get("/commision-mgt", adminController.commisionMgt.index)
+    router.post("/commision-mgt/(:id)", adminController.commisionMgt.update)
+
+    // Reports Management
+    router.get("/report-management/member-package", adminController.reportManagement.memberPackage)
+    router.get("/report-management/paid-level-bonus", adminController.reportManagement.paidLevelBonus)
+    router.get("/report-management/unpaid-level-bonus", adminController.reportManagement.unPaidLevelBonus)
+    router.get("/report-management/paid-cofounder-income", adminController.reportManagement.paidCofounderIncome)
+    router.get("/report-management/unpaid-cofounder-income", adminController.reportManagement.unPaidCofounderIncome)
+
+    // User wallet management
+    router.get("/wallet/users", adminController.walletManagement.users)
+    router.post("/wallet/user/manage", [validations.adminPanel.walletManagement], adminController.walletManagement.manage)
+    router.get("/wallet/user/history", [validations.adminPanel.ewalletHistory], adminController.walletManagement.ewalletHistory)
+
   });
 };

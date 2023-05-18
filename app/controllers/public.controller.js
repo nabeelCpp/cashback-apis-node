@@ -39,7 +39,8 @@ exports.errorHandlingFunc = (req, res, error) => {
 }
 
 exports.currentDate = () => {
-    return new Date().toISOString().split['T'][0];
+    const NOW = new Date();
+    return NOW.toISOString().split['T'][0];
 }
 
 exports.currentDateTime = () => {

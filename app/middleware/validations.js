@@ -204,7 +204,32 @@ adminPanel.createVendor = [
     body('password', 'Password is required').not().isEmpty(),
     body('service.id.*', 'Service cannot be empty').not().isEmpty(),
     (req, res, next) => {
-        console.log(req.body);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+adminPanel.walletManagement = [
+    body('user_id', 'User id is required').not().isEmpty(),
+    body('amount', 'Amount is required').not().isEmpty(),
+    body('wallet', 'Wallet type is required').not().isEmpty(),
+    body('action', 'Action is required(Either "add" or "subtract")').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+adminPanel.ewalletHistory = [
+    body('user_id', 'User id is required').not().isEmpty(),
+    (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
