@@ -47,7 +47,29 @@ module.exports = function(app) {
     // User wallet management
     router.get("/wallet/users", adminController.walletManagement.users)
     router.post("/wallet/user/manage", [validations.adminPanel.walletManagement], adminController.walletManagement.manage)
-    router.get("/wallet/user/history", [validations.adminPanel.ewalletHistory], adminController.walletManagement.ewalletHistory)
+    router.put("/wallet/user/history/(:user_id)", adminController.walletManagement.ewalletHistory)
 
+    // Payout management
+    router.get("/payout-mgt/generate-payout-list", adminController.payoutManagement.generatePayoutList)
+    router.post("/payout-mgt/generate-payout-list", validations.adminPanel.generatePayout ,adminController.payoutManagement.generatePayout)
+
+    // Settings Management
+    router.post("/settings/password", adminController.adminSettings.password)
+    router.post("/settings/profile-picture", adminController.adminSettings.profileImage)
+    router.get("/settings/policy-content", adminController.adminSettings.policyContent)
+    router.get("/settings/policy-content/(:id)", adminController.adminSettings.policyContent)
+    router.post("/settings/policy-content/(:id)", validations.adminPanel.policyContent, adminController.adminSettings.updatePolicyContent)
+
+    // Videos
+    router.get("/videos", adminController.manageVideos.index)
+    router.post("/videos", validations.adminPanel.createVideos, adminController.manageVideos.create)
+    router.put("/video/(:id)", validations.adminPanel.createVideos, adminController.manageVideos.update)
+    router.delete("/video/(:id)", adminController.manageVideos.delete)
+
+    // Official Annoucement
+    router.get("/official-annoucement", adminController.officialAnnoucement.index)
+    router.post("/official-annoucement", validations.adminPanel.createOfficialAnnoucement, adminController.officialAnnoucement.create)
+    router.put("/official-annoucement/(:id)", validations.adminPanel.createOfficialAnnoucement, adminController.officialAnnoucement.update)
+    router.delete("/official-annoucement/(:id)", adminController.officialAnnoucement.delete)
   });
 };

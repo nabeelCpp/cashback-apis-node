@@ -68,3 +68,15 @@ exports.makeid = async (length=10) => {
     }
     return result;
 }
+
+exports.makeidNumeric = async (length=10) => {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}

@@ -51,4 +51,7 @@ db.eshopPurchaseDetail = require("./eshopPurchaseDetail.model.js")(sequelize, Se
 db.dueClearRequest = require("./dueClearRequest.model.js")(sequelize, Sequelize);
 db.oldUserNames = require("./oldUserNames.model.js")(sequelize, Sequelize);
 db.statusMaintenancePuc = require("./statusMaintenancePuc.model.js")(sequelize, Sequelize);
+db.closingCreditDebit = require("./closingCreditDebit.model.js")(sequelize, Sequelize);
+db.Video = require("./video.model.js")(sequelize, Sequelize);
+db.contactDetail = require("./contactDetail.model.js")(sequelize, Sequelize);
 module.exports = db;

@@ -1,5 +1,5 @@
 const db = require("../../../models");
-const {User, matrixDownline, finalEWallet, statusMaintenance, amountDetail, lifejacketSubscription, creditDebit, pocRegistration, statusMaintenancePuc} = db;
+const {User, finalEWallet, creditDebit} = db;
 const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');
 exports.users = async (req, res) => {
@@ -80,7 +80,49 @@ exports.manage = async (req, res) => {
 }
 
 exports.ewalletHistory = async (req, res) => {
-    return res.send({
-        message: true
+    let user_id = req.params.user_id
+    // check if user exist or not
+    let user = await User.findOne({
+        where: {
+            user_id: user_id
+        }
     })
+    if(!user){
+        return res.status(400).send({
+            success: false,
+            message: "User not found!"
+        })
+    }
+    let history = await creditDebit.findAll({
+        where: {
+            user_id: user_id
+        }
+    })
+    let data = []
+    for (let i = 0; i < history.length; i++) {
+        const h = history[i]
+        const user = await User.findOne({
+            where: {
+                user_id: h.user_id
+            }
+        })
+        const sender = await User.findOne({
+            where: {
+                user_id: h.sender_id
+            }
+        })
+        let temp = {
+            userId: h.user_id,
+            username: user?.username,
+            senderId: h.sender_id,
+            senderUsername: sender?.username||"",
+            transactionType: h.ttype,
+            credit: h.credit_amt,
+            debit: h.debit_amt,
+            date: h.receive_date,
+        }
+        data.push(temp)
+        
+    }
+    return res.send(data)
 }

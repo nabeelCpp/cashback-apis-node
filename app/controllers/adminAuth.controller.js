@@ -27,7 +27,7 @@ exports.signin = (req, res) => {
       );
       
       // cdf150f6726f8f39eb2942e936939689bfa9bf0480e6150c760d257f7951dadd
-      // $2b$12$JDdUien9gpx/TTRuXT3AqOrwbWV.1mw5BQaAtG0m1klnPuTE1cK76
+      // $2b$12$FjaHLEI5j7GDAkoEST0IPeQh7sKb4/BkNlf/3C22e7kL8lWfDhQmy
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
