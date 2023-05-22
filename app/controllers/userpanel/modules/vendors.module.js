@@ -1,5 +1,5 @@
 const db = require("../../../models");
-const {venderServices, pocRegistration} = db;
+const {venderServices, pocRegistration, pocRegisterDetails} = db;
 const Op = db.Sequelize.Op;
 module.exports = async (req, res) => {
     let vendors = await venderServices.findAll();
@@ -11,12 +11,14 @@ module.exports = async (req, res) => {
         },
         attributes: ['file', 'user_id', 'first_name', 'last_name', 'telephone', 'address', 'id', ]
     });
+    let categories = await pocRegisterDetails.findAll();
     for (let index = 0; index < companies.length; index++) {
-        companies[index]['file'] = companies[index]['file'].split(','); 
+        companies[index]['file'] = companies[index]['file'].split(',').map(f=>`${process.env.BASE_URL}/uploads/${f}`); 
         
     }
     return res.status(200).send({
         vendors: vendors,
+        categories: categories,
         companies: companies
     })
 };
