@@ -1,7 +1,7 @@
 const multer = require("multer");
 const db = require("../../../models");
 const fs = require('fs');
-const {Admin, User, matrixDownline, finalEWallet, statusMaintenance, amountDetail, lifejacketSubscription, creditDebit, pocRegistration, statusMaintenancePuc, closingCreditDebit, Video, contactDetail} = db;
+const {Admin, User, contactDetail, levelIncomeBinary} = db;
 const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');
 const profileImagePath = `${process.env.PROJECT_DIR}/images/`;
@@ -127,5 +127,167 @@ exports.updatePolicyContent = async (req, res) => {
     return res.status(401).send({
         success: false,
         message: "Invalid id"
+    })
+}
+
+exports.blockManagement = async (req, res) => {
+    let user_id = req.params.user_id
+    let body = req.body
+    let user = await User.findOne({
+        where: {
+            [Op.or]: [
+                {user_id: user_id},
+                {username: user_id},
+            ]
+        }
+    })
+    if(user) {
+        if(body.down == 'with_downline'){
+            let incomes = await levelIncomeBinary.findAll({
+                income_id: user.user_id
+            })
+            incomes.forEach(async (i) => {
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: i.down_id
+                    }
+                })
+
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: user_id
+                    }
+                })
+            });
+        }else {
+            User.update({
+                user_status: body.block_status
+            }, {
+                where: {
+                    user_id: user.user_id
+                }
+            })
+        }
+
+        if(body.member_type == 'left'){
+            let leftMembers = await levelIncomeBinary.findAll({
+                where: {
+                    income_id: user.user_id,
+                    leg: 'left'
+                }
+            })
+            leftMembers.forEach(async (i) => {
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: i.down_id
+                    }
+                })
+
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: user_id
+                    }
+                })
+            });
+        }
+
+        if(body.member_type == 'right'){
+            let rightMembers = await levelIncomeBinary.findAll({
+                where: {
+                    income_id: user.user_id,
+                    leg: 'right'
+                }
+            })
+            rightMembers.forEach(async (i) => {
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: i.down_id
+                    }
+                })
+
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: user_id
+                    }
+                })
+            });
+        }
+
+        if(body.member_type == 'both'){
+            let bothMembers = await levelIncomeBinary.findAll({
+                where: {
+                    income_id: user.user_id,
+                    // leg: 'right'
+                }
+            })
+            bothMembers.forEach(async (i) => {
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: i.down_id
+                    }
+                })
+
+                User.update({
+                    user_status: body.block_status
+                }, {
+                    where: {
+                        user_id: user_id
+                    }
+                })
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message: "User blocked status updated successfully!"
+        })
+    }
+    return res.status(401).send({
+        success: false,
+        message: "Invalid user"
+    })
+}
+
+exports.userWithdrawBlock = async (req, res) => {
+    let user_id = req.params.user_id
+    let body = req.body
+    let user = await User.findOne({
+        where: {
+            [Op.or]: [
+                {user_id: user_id},
+                {username: user_id},
+            ]
+        }
+    })
+    if(user) {
+        User.update({
+            withdraw_status: body.block_status
+        }, {
+            where: {
+                user_id: user_id
+            }
+        })
+        return res.status(200).send({
+            success: true,
+            message: "Withdrawal Request Blocked Status Updated Successfully.."
+        })
+    }
+    return res.status(401).send({
+        success: false,
+        message: "Invalid user"
     })
 }

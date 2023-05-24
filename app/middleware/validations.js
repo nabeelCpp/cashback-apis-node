@@ -276,4 +276,40 @@ adminPanel.policyContent = [
     }
 ]
 
+adminPanel.userBlock = [
+    body('block_status', 'Block Status is required').not().isEmpty(),
+    body('member_type', 'Member Type is required').not().isEmpty(),
+    body('down', 'Select either left/right/both').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+adminPanel.userWithdrawBlock = [
+    body('block_status', 'Block Status is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+adminPanel.ticketResponse = [
+    body('response', 'Response is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
 exports.adminPanel = adminPanel;

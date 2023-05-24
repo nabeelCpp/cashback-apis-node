@@ -2,7 +2,7 @@ const db = require('../../../models');
 const multer = require("multer");
 const fs = require('fs');
 const Op = db.Sequelize.Op;
-const {pocRegistration, matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription} = db;
+const {pocRegistration, matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription, dueClearRequest} = db;
 const logosPath = `${process.env.PROJECT_DIR}/uploads/cmplogo/`;
 const galleryPath = `${process.env.PROJECT_DIR}/uploads/`;
 const galleryMaxCount = 5;
@@ -347,6 +347,34 @@ exports.create = async (req, res) => {
         return publicController.errorHandlingFunc(req, res, error.message);
     }
 }
+
+exports.paymentRequestReport = async (req, res) => {
+    let reports = await dueClearRequest.findAll({
+        order: [
+            ['id', 'DESC']
+        ]
+    })
+    let data = []
+    for (let i = 0; i < reports.length; i++) {
+        const r = reports[i].getValues()
+        let vendor = await pocRegistration.findOne({
+            where: {
+                user_id: r.user_id
+            }
+        })
+        let temp = {
+            user_id: r.user_id,
+            username: vendor.username,
+            payment_mode : r.payment_mode,
+            pay_proof: `${process.env.BASE_URL}/franchisepanel/images/${r.pay_proof}`,
+            posted_date: r.posted_date,
+            status: r.status
+        }   
+        data.push(temp)
+    }
+    return res.send(data)
+}
+
 const generateUserId = async () => {
     let user_id = "Emark"+String(Math.floor(Math.random()*100000)).padStart(5, 0);
     const users = await pocRegistration.findAll({where: {user_id: user_id}});

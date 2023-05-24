@@ -9,3 +9,4 @@ exports.payoutManagement = require('./adminpanel/modules/payoutManagement.module
 exports.officialAnnoucement = require('./adminpanel/modules/officialAnnoucement.module');
 exports.manageVideos = require('./adminpanel/modules/manageVideos.module');
 exports.adminSettings = require('./adminpanel/modules/adminSettings.module');
+exports.tickets = require('./adminpanel/modules/tickets.module');
