@@ -2,8 +2,8 @@ const db = require("../../../models");
 const { amountDetail, creditDebit, pocRegistration} = db;
 const Op = db.Sequelize.Op;
 module.exports = async (req, res) => {
-    let body = req.body
-    let commisions;
+    let body = Object.keys(req.body).length === 0?'':req.body
+    let commisions = []
     if(body){
         if(body.user_id && body.date_from && body.date_to){
             commisions = await amountDetail.findAll({
@@ -40,6 +40,7 @@ module.exports = async (req, res) => {
             });
         }
     }else{
+        console.log('asasd')
         commisions = await amountDetail.findAll();
     }
     let data = [];

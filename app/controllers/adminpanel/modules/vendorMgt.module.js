@@ -2,7 +2,7 @@ const db = require('../../../models');
 const multer = require("multer");
 const fs = require('fs');
 const Op = db.Sequelize.Op;
-const {pocRegistration, matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription, dueClearRequest} = db;
+const {pocRegistration, matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription, dueClearRequest, pucCreditDebit, creditDebit, eshopPurchaseDetail, venderServices, pocRegisterDetails} = db;
 const logosPath = `${process.env.PROJECT_DIR}/uploads/cmplogo/`;
 const galleryPath = `${process.env.PROJECT_DIR}/uploads/`;
 const galleryMaxCount = 5;
@@ -371,6 +371,386 @@ exports.paymentRequestReport = async (req, res) => {
             status: r.status
         }   
         data.push(temp)
+    }
+    return res.send(data)
+}
+
+exports.approvePaymentRequest = async (req, res) => {
+    let status = req.params.status
+    let id = req.params.id
+    let dueClear = await dueClearRequest.findByPk(id)
+    if(dueClear && status){
+        let vendor = await pocRegistration.findOne({
+            where: {
+                user_id: dueClear.user_id
+            },
+            attributes: ['due_amount']
+        })
+        if(vendor.due_amount >= dueClear.amount ) {
+            try {
+                pocRegistration.update({
+                    due_amount: db.sequelize.literal(`due_amount-${dueClear.amount}`)
+                }, {
+                    where: {
+                        user_id: dueClear.user_id
+                    }
+                })
+                let trasactionNo = await publicController.makeidNumeric(13)
+                let invoiceNo = await publicController.makeidNumeric(5)
+                pucCreditDebit.create({
+                    transaction_no: trasactionNo, 
+                    user_id: 'Admin', 
+                    credit_amt: dueClear.amount, 
+                    debit_amt: 0, 
+                    admin_charge: 0, 
+                    receiver_id: 'Admin', 
+                    sender_id: dueClear.user_id, 
+                    receive_date: new Date().toISOString().split('T')[0], 
+                    ttype: 'Clear Due', 
+                    TranDescription: `${dueClear.user_id} has cleared his due`, 
+                    Cause: dueClear.amount, 
+                    Remark: 'Clear Due', 
+                    invoice_no: invoiceNo, 
+                    product_name: '0', 
+                    status: 0, 
+                    ewallet_used_by: 'Admin Wallet',
+                    ts: new Date().toISOString(),
+                    current_url: '0'
+                })
+                creditDebit.create({
+                    transaction_no: trasactionNo, 
+                    user_id: dueClear.user_id, 
+                    credit_amt: dueClear.amount, 
+                    debit_amt: 0, 
+                    admin_charge: 0, 
+                    receiver_id: 123456, 
+                    sender_id: dueClear.amount, 
+                    receive_date: new Date().toISOString().split('T')[0], 
+                    ttype: 'Payment Approved', 
+                    TranDescription: 'Payment Approved From Admin', 
+                    Cause: 0, 
+                    Remark: 'Payment Approved',
+                    invoice_no: trasactionNo, 
+                    product_name: 'Payment Approved', 
+                    status: 0, 
+                    ewallet_used_by: 'Activation Wallet',
+                    current_url: '0'
+                })
+    
+                dueClearRequest.update({
+                    status: status
+                }, {
+                    where: {
+                        id: id
+                    }
+                })
+                
+            } catch (error) {
+                return publicController.errorHandlingFunc(req, res, error.message);
+            }
+            return res.send({
+                success: true,
+                message: "Due cleared Successfully!"
+            })
+            
+        }
+    }
+
+    return res.send({
+        success: false,
+        message: "Error occured while clearig request"
+    })
+}
+
+exports.rejectPaymentRequest = async (req, res) => {
+    let id = req.params.id
+    let body = req.body
+    let dueClear = await dueClearRequest.findByPk(id)
+    if(dueClear){
+        dueClearRequest.update({
+            status: 2,
+            admin_remark: body.remark||null,
+            admin_date: new Date().toISOString().split('T')[0] 
+        }, {
+            where: {
+                id: id
+            }
+        })
+        return res.send({
+            success: true,
+            message: "You have successfully rejected member request"
+        })
+    }
+    return res.send({
+        success: false,
+        message: "invalid id"
+    })
+}
+
+exports.salesReport = async (req, res) => {
+    let records = await pucCreditDebit.findAll({
+        where: {
+            ttype: 'Admin Commission'
+        },
+        group: [
+            ['sender_id']
+        ]
+    })
+    let data = []
+    let totalCommision = 0
+    let total = 0
+    for (let i = 0; i < records.length; i++) {
+        const rec = records[i].getValues()
+        let causeSum = await pucCreditDebit.sum("Cause", {
+            where: {
+                ttype: 'Admin Commission', 
+                sender_id : rec.sender_id
+            }
+        })
+
+        let creditSum = await pucCreditDebit.sum("credit_amt", {
+            where: {
+                ttype: 'Admin Commission', 
+                sender_id : rec.sender_id
+            }
+        })
+        total += creditSum
+        totalCommision += causeSum
+        let vendor = await pocRegistration.findOne({
+            where: {
+                user_id: rec.sender_id
+            }
+        })
+        let temp = {
+            transaction_no: rec.transaction_no,
+            vendor_id: rec.sender_id,
+            vendor_name: vendor?.first_name+' '+vendor?.last_name,
+            invoice_amount: causeSum,
+            commission_percent: rec?.Remark,
+            commision: creditSum,
+            receive_date: rec.receive_date,
+        }
+        data.push(temp)
+    }
+    let response = {}
+    response.total_sale = totalCommision
+    response.total_commision = total
+    response.data = data
+    return res.send(response)
+}
+
+
+exports.salesReportSingle = async (req, res) => {
+    let user_id = req.params.user_id
+    let vendor = await pocRegistration.findOne({
+        where: {
+            user_id: user_id
+        }
+    })
+    if(!vendor){
+        return res.status(401).send({
+            success: false,
+            message: "Invalid vendor id"
+        })
+    }
+    let records = await pucCreditDebit.findAll({
+        where: {
+            ttype: 'Admin Commission',
+            sender_id: user_id,
+        }
+    })
+    let totalCommision = 0
+    let total = 0
+    let data = []
+    for (let i = 0; i < records.length; i++) {
+        const rec = records[i].getValues()
+        total += parseFloat(rec.credit_amt)
+        totalCommision += parseFloat(rec.Cause)
+        let temp = {
+            transaction_no: rec.transaction_no,
+            vendor_id: rec.sender_id,
+            vendor_name: vendor?.first_name+' '+vendor?.last_name,
+            invoice_amount: rec.Cause,
+            commission_percent: rec?.Remark,
+            commision: rec.credit_amt,
+            invoice: rec.invoice_no,
+            receive_date: rec.receive_date,
+        }
+        data.push(temp)
+    }
+    let response = {}
+    response.total_sale = totalCommision
+    response.total_commision = total
+    response.data = data
+    return res.send(response)
+}
+
+exports.vendorInvoices = async (req, res) => {
+    let invoices = await amountDetail.findAll({
+        order: [
+            ['am_id', 'DESC']
+        ]
+    })
+    let grandRevenue = 0
+    let data = []
+    for (let i = 0; i < invoices.length; i++) {
+        const inv = invoices[i].getValues()
+        let user = await User.findOne({
+            where: {
+                user_id: inv.user_id, 
+            }
+        })
+        grandRevenue += parseFloat(inv.total_invoice_cv)
+        let temp = {
+            user_id: inv.user_id,
+            username: user.username,
+            invoice_no: inv.invoice_no,
+            total_amount: inv.total_invoice_cv,
+            date: inv.payment_date,
+            vendor: inv.seller_id
+        }
+        data.push(temp)
+    }
+    let response = {}
+    response.total_amount = grandRevenue
+    response.data = data
+    return res.send(response)
+}
+
+exports.vendorInvoice = async (req, res) => {
+    let invoice_no = req.params.invoice_no
+    let detail = await amountDetail.findOne({
+        where: {
+            invoice_no: invoice_no
+        }
+    })
+    if(!detail){
+        return res.status(401).send({
+            success: false,
+            message: "Invalid Invoice Number"
+        })
+    }
+    let user = await User.findOne({
+        where: {
+            user_id: detail.user_id
+        }
+    })
+    let items = await eshopPurchaseDetail.findAll({
+        where: {
+            invoice_no: invoice_no
+        },
+        attributes: ['product_name', 'net_price', 'quantity', 'price']
+    })
+    let response = {
+        total_purchase: detail.total_amount,
+        office_address: 'Cognisance Sciences',
+        user: {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            address: user.address,
+            city: user.city,
+            state: user.state,
+            country: user.country,
+            telephone: user.telephone,
+        },
+        invoice_no: detail.invoice_no,
+        invoice_date: detail.payment_date,
+        invoice_status: 'Paid',
+        items: items,
+        subtotal: detail.net_amount,
+        grand_total: detail.total_amount
+
+
+    }
+    return res.send(response)
+}
+
+exports.services = async (req, res) => {
+    let services = await venderServices.findAll()
+    return res.send(services)
+}
+
+exports.deleteService = async (req, res) => {
+    let id = req.params.id
+    let service = await venderServices.findByPk(id)
+    if(!service){
+        return res.status(401).send({
+            success: false,
+            message: "Service not found"
+        })
+    }
+    try {
+        await venderServices.destroy({
+            where: {
+                id: id
+            }
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+    return res.send({
+        success: true,
+        message: "Service deleted successfully!"
+    })
+}
+
+exports.createService = async (req, res) => {
+    let body = req.body
+    try {
+        await venderServices.create({
+            service_name: body.service_name,
+            date: new Date().toISOString()
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+    return res.send({
+        success: true,
+        message: "Service created successfully!"
+    })
+}
+
+exports.ourVendors = async (req, res) =>  {
+    let vendors = await venderServices.findAll();
+    let companies = await pocRegistration.findAll({
+        where: {
+            franchise_category: {
+                [Op.ne] : 'Master Franchise'
+            }
+        },
+        attributes: ['file', 'user_id', 'first_name', 'last_name', 'telephone', 'address', 'id', ]
+    });
+    let categories = await pocRegisterDetails.findAll();
+    for (let index = 0; index < companies.length; index++) {
+        companies[index]['file'] = companies[index]['file'].split(',').map(f=>`${process.env.BASE_URL}/uploads/${f}`); 
+        
+    }
+    return res.status(200).send({
+        vendors: vendors,
+        categories: categories,
+        companies: companies
+    })
+}
+
+exports.ourVendorsHistory = async (req, res) => {
+    let user_id = req.params.user_id
+    let details = await amountDetail.findAll({
+        where: {
+            seller_id: user_id
+        }
+    })
+    let data = []
+    for (let i = 0; i < details.length; i++) {
+        const detail = details[i].getValues()
+        let temp = {
+            user_id: detail.user_id,
+            seller_id: detail.seller_id,
+            total_sale: detail.total_invoice_cv,
+            invoice_no: detail.invoice_no,
+            date: detail.date
+        }
+        data.push(temp)
+        
     }
     return res.send(data)
 }
