@@ -30,6 +30,7 @@ module.exports = function(app) {
     router.put("/vendor/update/gallery/(:id)", adminController.vendorMgt.updateGallery);
     router.put("/vendor/update/logo/(:id)", adminController.vendorMgt.updateLogo);
     router.post("/vendor/create",[validations.adminPanel.createVendor], adminController.vendorMgt.create);
+    router.get("/vendor/payment-request-report", adminController.vendorMgt.paymentRequestReport);
     
     // Revenue Report
     router.get("/admin-revenue/report", adminController.adminRevenueReport)
@@ -52,6 +53,16 @@ module.exports = function(app) {
     // Payout management
     router.get("/payout-mgt/generate-payout-list", adminController.payoutManagement.generatePayoutList)
     router.post("/payout-mgt/generate-payout-list", validations.adminPanel.generatePayout ,adminController.payoutManagement.generatePayout)
+    router.get("/payout-mgt/closing-report", adminController.payoutManagement.closingReport)
+    router.get("/payout-mgt/all-payout-list", adminController.payoutManagement.allPayout)
+
+    // Query Tickets management
+    router.get("/tickets", adminController.tickets.index)
+    router.get("/tickets/closed", adminController.tickets.closedTickets)
+    router.get("/tickets/(:id)", adminController.tickets.index)
+    router.put("/tickets/(:id)", validations.adminPanel.ticketResponse, adminController.tickets.saveResponse)
+    router.delete("/tickets/(:id)", adminController.tickets.deleteTicket)
+    
 
     // Settings Management
     router.post("/settings/password", adminController.adminSettings.password)
@@ -59,6 +70,8 @@ module.exports = function(app) {
     router.get("/settings/policy-content", adminController.adminSettings.policyContent)
     router.get("/settings/policy-content/(:id)", adminController.adminSettings.policyContent)
     router.post("/settings/policy-content/(:id)", validations.adminPanel.policyContent, adminController.adminSettings.updatePolicyContent)
+    router.put("/settings/user-block/(:user_id)", validations.adminPanel.userBlock, adminController.adminSettings.blockManagement)
+    router.put("/settings/user-withdraw-block/(:user_id)", validations.adminPanel.userWithdrawBlock, adminController.adminSettings.userWithdrawBlock)
 
     // Videos
     router.get("/videos", adminController.manageVideos.index)
