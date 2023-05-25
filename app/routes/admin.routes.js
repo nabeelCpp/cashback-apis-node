@@ -68,6 +68,11 @@ module.exports = function(app) {
     router.get("/payout-mgt/closing-report", adminController.payoutManagement.closingReport)
     router.get("/payout-mgt/all-payout-list", adminController.payoutManagement.allPayout)
 
+    // Withdrawal Request Management
+    router.get("/withdrawal-request/open", adminController.withDrawalRequest.open)
+    router.get("/withdrawal-request/close", adminController.withDrawalRequest.close)
+    router.post("/withdrawal-request/open", validations.adminPanel.saveWithdrawalRequest, adminController.withDrawalRequest.save)
+
     // Query Tickets management
     router.get("/tickets", adminController.tickets.index)
     router.get("/tickets/closed", adminController.tickets.closedTickets)

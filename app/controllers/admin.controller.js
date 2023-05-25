@@ -10,3 +10,4 @@ exports.officialAnnoucement = require('./adminpanel/modules/officialAnnoucement.
 exports.manageVideos = require('./adminpanel/modules/manageVideos.module');
 exports.adminSettings = require('./adminpanel/modules/adminSettings.module');
 exports.tickets = require('./adminpanel/modules/tickets.module');
+exports.withDrawalRequest = require('./adminpanel/modules/withDrawalRequest.module');
