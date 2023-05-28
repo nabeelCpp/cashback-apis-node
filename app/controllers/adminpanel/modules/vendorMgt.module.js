@@ -366,6 +366,7 @@ exports.paymentRequestReport = async (req, res) => {
             user_id: r.user_id,
             username: vendor.username,
             payment_mode : r.payment_mode,
+            amount : r.amount,
             pay_proof: `${process.env.BASE_URL}/franchisepanel/images/${r.pay_proof}`,
             posted_date: r.posted_date,
             status: r.status
@@ -688,9 +689,11 @@ exports.deleteService = async (req, res) => {
     } catch (error) {
         return publicController.errorHandlingFunc(req, res, error.message);
     }
+    let services = await venderServices.findAll()
     return res.send({
         success: true,
-        message: "Service deleted successfully!"
+        message: "Service deleted successfully!",
+        services: services
     })
 }
 
@@ -704,9 +707,11 @@ exports.createService = async (req, res) => {
     } catch (error) {
         return publicController.errorHandlingFunc(req, res, error.message);
     }
+    let services = await venderServices.findAll()
     return res.send({
         success: true,
-        message: "Service created successfully!"
+        message: "Service created successfully!",
+        services: services
     })
 }
 

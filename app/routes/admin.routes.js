@@ -101,5 +101,10 @@ module.exports = function(app) {
     router.post("/official-annoucement", validations.adminPanel.createOfficialAnnoucement, adminController.officialAnnoucement.create)
     router.put("/official-annoucement/(:id)", validations.adminPanel.createOfficialAnnoucement, adminController.officialAnnoucement.update)
     router.delete("/official-annoucement/(:id)", adminController.officialAnnoucement.delete)
+
+    // member login via user id
+    router.get("/member/login/(:user_id)", adminController.backOffice.memberAuth)
+    router.get("/vendor/login/(:user_id)", adminController.backOffice.vendorAuth)
+
   })
 }
