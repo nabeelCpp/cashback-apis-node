@@ -189,7 +189,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         lendmark : {
             type: Sequelize.TEXT, 
-            allowNull: false
+            allowNull: true
         },
         franchise_satus : {
             type: Sequelize.INTEGER,

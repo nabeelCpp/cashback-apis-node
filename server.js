@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.APP_PORT;
 const cors = require("cors");
 
-var allowedDomains = ['http://localhost:3000', 'http://localhost:3001', 'http://vendor.cashbackforever.net:8080', 'http://userpanel.cashbackforever.net:8081', 'http://dev.cashbackforever.net:8082'];
+var allowedDomains = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://vendor.cashbackforever.net:8080', 'http://userpanel.cashbackforever.net:8081', 'http://dev.cashbackforever.net:8082'];
 app.use(cors({
   origin: function (origin, callback) {
     // bypass the requests with no origin (like curl requests, mobile apps, etc )

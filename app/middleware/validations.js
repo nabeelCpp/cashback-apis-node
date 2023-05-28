@@ -323,4 +323,15 @@ adminPanel.createService = [
     }
 ]
 
+adminPanel.saveWithdrawalRequest = [
+    body('list', 'List of users is required').isArray({min: 1}),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
 exports.adminPanel = adminPanel;

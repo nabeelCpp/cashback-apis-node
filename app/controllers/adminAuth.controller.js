@@ -23,7 +23,8 @@ exports.signin = (req, res) => {
       
       var passwordIsValid = bcrypt.compareSync(
         req.body.password,
-        admin.password
+        // admin.password
+        admin.password_bcrypt
       );
       
       // cdf150f6726f8f39eb2942e936939689bfa9bf0480e6150c760d257f7951dadd
