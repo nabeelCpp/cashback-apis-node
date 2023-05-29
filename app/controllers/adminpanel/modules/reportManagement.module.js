@@ -121,7 +121,7 @@ exports.unPaidLevelBonus = async (req, res) => {
                 user_id: record.sender_id
             }
         })
-        totalCommision += parseInt(record.credit_amt)
+        totalCommision += parseFloat(record.credit_amt)
         let temp = {
             receiverUserId: record.user_id,
             username: user?.username,
@@ -170,7 +170,7 @@ exports.paidCofounderIncome = async (req, res) => {
                 user_id: record.sender_id
             }
         })
-        totalCommision += parseInt(record.credit_amt)
+        totalCommision += parseFloat(record.credit_amt)
         let temp = {
             userId: record.user_id,
             username: user?.first_name+' '+user?.last_name,
@@ -214,7 +214,7 @@ exports.unPaidCofounderIncome = async (req, res) => {
                 user_id: record.sender_id
             }
         })
-        totalCommision += parseInt(record.credit_amt)
+        totalCommision += parseFloat(record.credit_amt)
         let temp = {
             userId: record.user_id,
             username: user?.first_name+' '+user?.last_name,
