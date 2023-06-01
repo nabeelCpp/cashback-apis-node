@@ -89,7 +89,7 @@ module.exports = function(app) {
     router.post("/settings/policy-content/(:id)", validations.adminPanel.policyContent, adminController.adminSettings.updatePolicyContent)
     router.put("/settings/user-block/(:user_id)", validations.adminPanel.userBlock, adminController.adminSettings.blockManagement)
     router.put("/settings/user-withdraw-block/(:user_id)", validations.adminPanel.userWithdrawBlock, adminController.adminSettings.userWithdrawBlock)
-
+    router.get("/profile", adminController.adminSettings.getProfile)
     // Videos
     router.get("/videos", adminController.manageVideos.index)
     router.post("/videos", validations.adminPanel.createVideos, adminController.manageVideos.create)

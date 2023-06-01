@@ -13,13 +13,13 @@ exports.password = async (req, res) => {
         admin.password
     );
     if (!passwordIsValid) {
-        return res.status(401).send({
+        return res.status(400).send({
             success: false,
             message: "Invalid Old Password!"
         });
     }
     if(req.body.new_password != req.body.c_password){
-        return res.status(401).send({
+        return res.status(400).send({
             success: false,
             message: "New Password and confirm Password doesnt match!"
         });
@@ -124,7 +124,7 @@ exports.updatePolicyContent = async (req, res) => {
             message: "Policy content updated successfully!"
         })
     }
-    return res.status(401).send({
+    return res.status(400).send({
         success: false,
         message: "Invalid id"
     })
@@ -256,7 +256,7 @@ exports.blockManagement = async (req, res) => {
             message: "User blocked status updated successfully!"
         })
     }
-    return res.status(401).send({
+    return res.status(400).send({
         success: false,
         message: "Invalid user"
     })
@@ -286,8 +286,13 @@ exports.userWithdrawBlock = async (req, res) => {
             message: "Withdrawal Request Blocked Status Updated Successfully.."
         })
     }
-    return res.status(401).send({
+    return res.status(400).send({
         success: false,
         message: "Invalid user"
     })
+}
+
+exports.getProfile = async (req, res) => {
+    req.admin.image = process.env.BASE_URL+'/images/'+req.admin.image
+    return res.send(req.admin)
 }

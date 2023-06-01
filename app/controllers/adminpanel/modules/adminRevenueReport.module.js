@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
             }
         })
         let totalCommision = c.net_amount*vendor.commission_percent/100
-        tCommision += tCommision + totalCommision
+        tCommision += parseFloat(totalCommision)
         let totalPayoutDistribution = levelCom + coFounder
         totalPayout += totalPayoutDistribution
         let companyRevenue = totalCommision - totalPayoutDistribution;

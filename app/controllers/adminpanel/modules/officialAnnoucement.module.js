@@ -13,7 +13,7 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
     let body = req.body
-    Promo.create({
+    let create = await Promo.create({
         news_name: body.title,
         description: body.description,
         status: body.status,
@@ -21,7 +21,8 @@ exports.create = async (req, res) => {
     })
     return res.send({
         success: true,
-        message: "Annoucement created successfully!"
+        message: "Annoucement created successfully!",
+        data: create
     })
 }
 
@@ -30,7 +31,7 @@ exports.update = async (req, res) => {
     let body = req.body
     let promo = await Promo.findByPk(id)
     if(promo){
-        promo.news_name = body.news_name || promo.news_name
+        promo.news_name = body.title || promo.news_name
         promo.description = body.description || promo.description
         promo.status = body.status || promo.status
         promo.posted_date = new Date().toISOString()

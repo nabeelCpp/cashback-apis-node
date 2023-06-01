@@ -13,7 +13,7 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
     let body = req.body
-    Video.create({
+    let create = await Video.create({
         title: body.title,
         description: body.description,
         video_link: body.link,
@@ -21,7 +21,8 @@ exports.create = async (req, res) => {
     })
     return res.send({
         success: true,
-        message: "Video created successfully!"
+        message: "Video created successfully!",
+        data: create
     })
 }
 
@@ -41,7 +42,7 @@ exports.update = async (req, res) => {
         })
         return res.send({
             success: true,
-            message: "Video updated successfully!"
+            message: "Video updated successfully!",
         })
     }
     return res.status(500).send({
