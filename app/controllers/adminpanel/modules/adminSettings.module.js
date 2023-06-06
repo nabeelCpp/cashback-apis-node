@@ -10,7 +10,8 @@ exports.password = async (req, res) => {
     let admin = await Admin.findByPk(req.admin.id)
     var passwordIsValid = bcrypt.compareSync(
         req.body.old_password,
-        admin.password
+        // admin.password
+        admin.password_bcrypt
     );
     if (!passwordIsValid) {
         return res.status(400).send({
@@ -27,7 +28,7 @@ exports.password = async (req, res) => {
     // update password
     let password = bcrypt.hashSync(req.body.new_password, 12)
     Admin.update({
-        password: password
+        password_bcrypt: password
     }, {
         where: {
             id: admin.id

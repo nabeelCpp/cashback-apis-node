@@ -363,6 +363,7 @@ exports.paymentRequestReport = async (req, res) => {
             }
         })
         let temp = {
+            id: r.id,
             user_id: r.user_id,
             username: vendor.username,
             payment_mode : r.payment_mode,
@@ -454,10 +455,15 @@ exports.approvePaymentRequest = async (req, res) => {
                 message: "Due cleared Successfully!"
             })
             
+        }else{
+            return res.status(400).send({
+                success: false,
+                message: 'Failed to approve! Requested amount is greater than balance'
+            })
         }
     }
 
-    return res.send({
+    return res.status(400).send({
         success: false,
         message: "Error occured while clearig request"
     })
