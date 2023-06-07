@@ -60,7 +60,7 @@ module.exports = function(app) {
     // User wallet management
     router.get("/wallet/users", adminController.walletManagement.users)
     router.post("/wallet/user/manage", [validations.adminPanel.walletManagement], adminController.walletManagement.manage)
-    router.put("/wallet/user/history/(:user_id)", adminController.walletManagement.ewalletHistory)
+    router.get("/wallet/user/history/(:user_id)", adminController.walletManagement.ewalletHistory)
 
     // Payout management
     router.get("/payout-mgt/generate-payout-list", adminController.payoutManagement.generatePayoutList)

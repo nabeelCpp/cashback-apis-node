@@ -38,7 +38,8 @@ exports.singleList = async (req, res) => {
     let vendor = await pocRegistration.findByPk(req.params.id, {
         attributes: {exclude: ['password']},
     });
-    vendor.file = await vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`);
+    vendor.file = vendor.file.length>0?await vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`):[];
+    vendor.cmp_logo = vendor.cmp_logo?`${process.env.BASE_URL}/uploads/cmplogo/${vendor.cmp_logo}`:'';
     return res.send(vendor);
 }
 
@@ -729,7 +730,7 @@ exports.ourVendors = async (req, res) =>  {
                 [Op.ne] : 'Master Franchise'
             }
         },
-        attributes: ['file', 'user_id', 'first_name', 'last_name', 'telephone', 'address', 'id', ]
+        attributes: ['file', 'user_id', 'first_name', 'last_name', 'telephone', 'address', 'id', 'location']
     });
     let categories = await pocRegisterDetails.findAll();
     for (let index = 0; index < companies.length; index++) {
