@@ -278,7 +278,7 @@ adminPanel.policyContent = [
 
 adminPanel.userBlock = [
     body('block_status', 'Block Status is required').not().isEmpty(),
-    body('member_type', 'Member Type is required').not().isEmpty(),
+    // body('member_type', 'Member Type is required').not().isEmpty(),
     body('down', 'Select either left/right/both').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);

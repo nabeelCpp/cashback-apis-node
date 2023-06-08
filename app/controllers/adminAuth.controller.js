@@ -46,6 +46,7 @@ exports.signin = (req, res) => {
           username: admin.username,
           email: admin.email,
           name: admin.name,
+          image: admin.image?`${process.env.BASE_URL}/images/${admin.image}`:'',
           accessToken: token
         }
       });  

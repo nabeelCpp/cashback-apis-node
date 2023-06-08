@@ -1,6 +1,6 @@
 const db = require('../../../models');
 const Op = db.Sequelize.Op;
-const {oldUserNames,matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription} = db;
+const {oldUserNames,matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription, manageBvHistory} = db;
 const publicController = require('../../public.controller');
 var bcrypt = require("bcrypt");
 exports.list = async (req, res) => {
@@ -391,4 +391,104 @@ exports.genealogy = async (req, res) => {
     });
     return res.status(200).send(data);
 
+}
+
+exports.topup = async (req, res) => {
+  let user_id = req.params.member_id
+  let body = req.body
+  if(body.amount > 0){
+    // update user
+    await User.update({
+      power_leg_business: db.sequelize.literal(`power_leg_business + ${body.amount}`),
+    }, {
+      where: {
+        user_id: user_id
+      }
+    })
+    let user = await User.findOne({
+      where: {
+        user_id: user_id
+      },
+      attributes: ['power_leg_business']
+    })
+    let selfPoweLegBusiness = user.power_leg_business
+    let selfBussiness = await lifejacketSubscription.sum('after_active', {
+      where: {
+        user_id: user_id
+      }
+    })
+    let downBussiness = await manageBvHistory.sum('bv', {
+      where : {
+        income_id: user_id
+      }
+    })
+
+    let totalEarning = selfBussiness + downBussiness + selfPoweLegBusiness
+    let rank = null
+    let slab = null
+    let rankname = null
+    if(totalEarning >=0 && totalEarning < 1000){
+        rank = 2;
+        slab = 5;
+        rankname = 'Beginner';
+    }else if(totalEarning >=1000 && totalEarning< 4000){
+        rank = 3;
+        slab = 7;
+        rankname = 'Starter';
+    }else if(totalEarning >=4000 && totalEarning< 20000){
+        rank = 4;
+        slab = 9;
+        rankname = 'Associate';
+    }else if(totalEarning >=20000 && totalEarning< 50000){
+        rank = 5;
+        slab = 11;
+        rankname = 'Sr. Associate';
+    }else if(totalEarning >=50000 && totalEarning< 100000){
+        rank = 6;
+        slab = 12.5;
+        rankname = 'Adviser';
+    }else if(totalEarning >=100000 && totalEarning< 500000){
+        rank = 7;
+        slab = 14;
+        rankname = 'Sr. Adviser';
+    }else if(totalEarning >=500000 && totalEarning< 1000000){
+        rank = 8;
+        slab = 15.5;
+        rankname = 'Director';
+    }else if(totalEarning >=1000000 && totalEarning< 2000000){
+        rank = 9;
+        slab = 17;
+        rankname = 'Sr. Director';
+    }else if(totalEarning >=2000000 && totalEarning< 5000000){
+        rank = 10;
+        slab = 18;
+        rankname = 'Star Director';
+    }else if(totalEarning >=5000000 && totalEarning< 10000000){
+        rank = 11;
+        slab = 19;
+        rankname = 'Sr. Star Director';
+    }else if(totalEarning >=10000000){
+        rank = 12;
+        slab = 20;
+        rankname = 'SuperStar Director';
+    }
+    User.update({
+      slab: slab,
+      rank: rank,
+      active_status: 1
+    }, {
+      where: {
+        user_id: user_id
+      }
+    })
+    return res.send({
+      success: true,
+      message: "Topped Up successfully"
+    })
+  }else{
+    return res.status(500).send({
+      success: false,
+      message: 'Amount must be greater than 0'
+    })
+  }
 }

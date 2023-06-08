@@ -18,6 +18,8 @@ module.exports = function(app) {
     router.get("/wallet-mgt/transactions", userController.walletManagement.transactionHistory);
     router.get("/wallet-mgt/mywallet", userController.walletManagement.myWallet);
     router.get("/wallet-mgt/income-withdrawal", userController.walletManagement.withdrawRequest);
+    router.post("/wallet-mgt/income-withdrawal", userController.walletManagement.checkPassword);
+    router.post("/wallet-mgt/income-withdrawal/submit", userController.walletManagement.submitWithdrawal);
     router.get("/wallet-mgt/my-withdrawal-requests", userController.walletManagement.myWithdrawalRequests);
     router.get("/vendors", userController.vendors);
     router.get("/genealogy/tree-view", userController.genealogy.treeView);

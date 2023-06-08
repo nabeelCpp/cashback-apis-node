@@ -20,6 +20,7 @@ module.exports = function(app) {
     router.put("/member/update/(:id)", [validations.adminPanel.updateMember], adminController.membersMgt.update)
     router.post("/member/create", [validations.signupValidation], adminController.membersMgt.create)
     router.get("/member/genealogy/(:member_id)", adminController.membersMgt.genealogy)
+    router.put("/member/topup/(:member_id)", adminController.membersMgt.topup)
     
     // Vendor list
     router.get("/vendor/list", adminController.vendorMgt.list)
@@ -60,7 +61,7 @@ module.exports = function(app) {
     // User wallet management
     router.get("/wallet/users", adminController.walletManagement.users)
     router.post("/wallet/user/manage", [validations.adminPanel.walletManagement], adminController.walletManagement.manage)
-    router.put("/wallet/user/history/(:user_id)", adminController.walletManagement.ewalletHistory)
+    router.get("/wallet/user/history/(:user_id)", adminController.walletManagement.ewalletHistory)
 
     // Payout management
     router.get("/payout-mgt/generate-payout-list", adminController.payoutManagement.generatePayoutList)
