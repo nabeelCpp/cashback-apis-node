@@ -47,3 +47,9 @@ exports.planHistory = async(req, res) => {
     }
     return res.status(200).send(plans);
 }
+
+exports.subscribeNewPlan = async (req, res) => {
+  return res.send({
+    message: true
+  })
+}
