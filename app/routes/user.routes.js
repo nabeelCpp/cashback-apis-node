@@ -1,5 +1,6 @@
 const { authJwt, validations } = require("../middleware");
 const userController = require("../controllers/user.controller");
+const adminController = require("../controllers/admin.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -32,8 +33,11 @@ module.exports = function(app) {
 
     router.get("/invoice/package-purchase", userController.invoice.myPackagePurchase);
     router.get("/invoice/my-shopping", userController.invoice.myShoppingInvoices);
+    router.get("/invoice/(:invoice_no)", adminController.vendorMgt.vendorInvoice)
+
     router.get("/profile", userController.profile.index);
     router.post("/profile", [validations.profile], userController.profile.update);
+    router.post("/profile/update/image", userController.profile.updateImage)
     router.post("/bank-info/update", userController.profile.updateBankInfo);
     router.post("/profile/update-password", [validations.updatePassword], userController.profile.updatePassword);
     

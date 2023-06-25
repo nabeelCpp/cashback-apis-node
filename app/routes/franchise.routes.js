@@ -18,6 +18,7 @@ module.exports = function(app) {
     router.post("/bank/update", [franchiseValidations.bank], franchiseController.dashboard.updateBank);
     router.post("/logo/update",  franchiseController.dashboard.updateLogo);
     router.post("/gallery/update",  franchiseController.dashboard.updateGallery);
+    router.delete("/gallery/remove/(:id)",  franchiseController.dashboard.removeGallery);
 
     // Billing Section
     router.get("/invoices/all", franchiseController.billingSection.invoices);
@@ -28,5 +29,7 @@ module.exports = function(app) {
     router.get("/terms-and-conditions", franchiseController.dashboard.termsAndConditions);
     router.post("/pay-dues", [franchiseValidations.payDues], franchiseController.billingSection.payDues );
     router.put("/pay-dues/(:id)", franchiseController.billingSection.payDuesProof );
+    router.get("/checkuser/(:userid)", franchiseController.billingSection.checkUserId );
+    router.get("/checkinvoice/(:invoice)", franchiseController.billingSection.checkInvoice );
   });
 };

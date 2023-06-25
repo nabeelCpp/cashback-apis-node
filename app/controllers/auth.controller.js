@@ -153,6 +153,7 @@ exports.signup = (req, res) => {
                               email: response.email,
                               first_name: response.first_name,
                               last_name: response.last_name,
+                              image: response.image&&`${process.env.BASE_URL}/userpanel/images/${response.image}`,
                               accessToken: token
                             }
                           });
@@ -199,8 +200,16 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
   User.findOne({
     where: {
-      // username: req.body.username
-      email: req.body.email
+      [Op.or]: [
+        {
+          // username: req.body.sponsorid,
+          username: req.body.email
+        },
+        {
+          email: req.body.email
+          // user_id: req.body.sponsorid,
+        }
+      ]
     }
   })
     .then(user => {
@@ -235,6 +244,7 @@ exports.signin = (req, res) => {
           email: user.email,
           first_name: user.first_name,
           last_name: user.last_name,
+          image: user.image&&`${process.env.BASE_URL}/userpanel/images/${user.image}`,
           accessToken: token
         }
       });  

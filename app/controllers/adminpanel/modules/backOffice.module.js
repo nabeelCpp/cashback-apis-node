@@ -28,6 +28,7 @@ exports.memberAuth = async (req, res) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+            image: user.image&&`${process.env.BASE_URL}/userpanel/images/${user.image}`,
             accessToken: token
         }
     });
@@ -58,6 +59,7 @@ exports.vendorAuth = async (req, res) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+            cmp_logo : user.cmp_logo&&`${process.env.BASE_URL}/uploads/cmplogo/${user.cmp_logo}`,
             accessToken: token
         }
     });

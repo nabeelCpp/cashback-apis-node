@@ -48,6 +48,7 @@ exports.signin = (req, res) => {
           last_name: vendor.last_name,
           email: vendor.email,
           name: vendor.name,
+          cmp_logo : vendor.cmp_logo&&`${process.env.BASE_URL}/uploads/cmplogo/${vendor.cmp_logo}`,
           accessToken: token
         }
       });  

@@ -336,6 +336,17 @@ exports.create = async (req, res) => {
             'company_reg_no':body.company_reg_no
         };
         let vendorCreate = await pocRegistration.create(insert);
+        if(body.service && body.service.id && body.service.id.length > 0){
+            for (let index = 0; index < body.service.id.length; index++) {
+                pocRegisterDetails.create({
+                    poc_userid:  body.user_id, 
+                    catogory: body.service.id[index], 
+                    title: body.service.title[index], 
+                    description: body.service.description[index]
+                })
+                
+            }
+        }
         return res.status(200).send({
             success: true,
             message: "Vendor created successfully!",

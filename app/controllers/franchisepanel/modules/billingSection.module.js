@@ -161,7 +161,7 @@ exports.generateInvoice = async (req, res) => {
 
     const transactionNo = req.vendor.user_id+parseInt(String(Math.floor(Math.random()*10000000)).padStart(7, 0));
     
-    try {
+    // try {
         pucCreditDebit.create({
             transaction_no: transactionNo,
             user_id: req.vendor.user_id, 
@@ -179,17 +179,17 @@ exports.generateInvoice = async (req, res) => {
             product_name: 0, 
             status: 0, 
             ewallet_used_by: 'Admin Wallet',
-            ts: new Date().toISOString(),
+            // ts: new Date().toISOString(),
             current_url: 0 ,
-            lost_amt: 0
+            // lost_amt: 0
         });
-    } catch (error) {
-        console.log(error);
-        return res.status(503).send({
-            success: false,
-            message: error
-        })
-    }
+    // } catch (error) {
+    //     console.log(error);
+    //     return res.status(503).send({
+    //         success: false,
+    //         message: error
+    //     })
+    // }
 
     try {
         pocRegistration.update({
@@ -218,7 +218,7 @@ exports.generateInvoice = async (req, res) => {
             total_amount: grandTotal, 
             payment_date: new Date().toISOString().split('T')[0], 
             status: 0, 
-            ts: new Date().toISOString(), 
+            // ts: new Date().toISOString(), 
             shipping_charge: 0, 
             tax: 0, 
             payment_type: 0, 
@@ -310,7 +310,7 @@ exports.generateInvoice = async (req, res) => {
                             product_name: body.invoice_no,
                             status: 0,
                             ewallet_used_by: 'E Wallet',
-                            ts: new Date().toISOString(),
+                            // ts: new Date().toISOString(),
                             current_url: body.current_url,
                             package_id: 0,
                             percent: 0,
@@ -344,7 +344,7 @@ exports.generateInvoice = async (req, res) => {
                             product_name: body.invoice_no,
                             status: 0,
                             ewallet_used_by: 'E Wallet',
-                            ts: new Date().toISOString(),
+                            // ts: new Date().toISOString(),
                             current_url: body.current_url,
                             package_id: 0,
                             percent: 0,
@@ -381,7 +381,7 @@ exports.generateInvoice = async (req, res) => {
                                 product_name: body.invoice_no,
                                 status: 0,
                                 ewallet_used_by: 'E Wallet',
-                                ts: new Date().toISOString(),
+                                // ts: new Date().toISOString(),
                                 current_url: body.current_url,
                                 package_id: 0,
                                 percent: 0,
@@ -416,7 +416,7 @@ exports.generateInvoice = async (req, res) => {
                                 product_name: body.invoice_no,
                                 status: 0,
                                 ewallet_used_by: 'E Wallet',
-                                ts: new Date().toISOString(),
+                                // ts: new Date().toISOString(),
                                 current_url: body.current_url,
                                 package_id: 0,
                                 percent: 0,
@@ -450,7 +450,7 @@ exports.generateInvoice = async (req, res) => {
                                 product_name: body.invoice_no,
                                 status: 0,
                                 ewallet_used_by: 'E Wallet',
-                                ts: new Date().toISOString(),
+                                // ts: new Date().toISOString(),
                                 current_url: body.current_url,
                                 package_id: 0,
                                 percent: 0,
@@ -594,4 +594,50 @@ exports.payDuesProof  = async (req, res) => {
             message: "Error while uploading pay proof"
         });
     });  
+}
+
+exports.checkUserId = async (req, res) => {
+    let userid = req.params.userid
+    let user = await User.findOne({
+        where: {
+            [Op.or]: [
+                {
+                    user_id: userid
+                },
+                {
+                    username: userid
+                }
+            ]
+        }
+    })
+    if(!user){
+        return res.status(404).send({
+            success: false,
+            message: "Invalid userid"
+        })
+    }
+    return res.send({
+        success: true,
+        name: user.username
+    })
+}
+
+
+exports.checkInvoice = async (req, res) => {
+    let invoice = req.params.invoice
+    let invoices = await amountDetail.count({
+        where: {
+            invoice_no: invoice
+        }
+    })
+    if(invoices){
+        return res.status(500).send({
+            success: false,
+            message: "Invoice already in use"
+        })
+    }
+    return res.send({
+        success: true,
+        message: 'Invoice is available' 
+    })
 }

@@ -222,6 +222,13 @@ exports.updateGallery = async (req, res) => {
         req.files.forEach(async (file) => {
             galleryFiles.push(file.filename);
         });
+        if(req.vendor.file) {
+            let files = req.vendor.file.split(',')
+            files.forEach(file => {
+                galleryFiles.push(file)
+            });
+            galleryFiles.reverse()
+        }
         let resp = await Vendor.update({file: galleryFiles.join(',')}, {
             where: {
                 id: req.vendor.id
@@ -229,18 +236,18 @@ exports.updateGallery = async (req, res) => {
         });
         if(resp) {
             // Delete old files.
-            const oldGallery = req.vendor.file.split(',');
-            oldGallery.forEach(old => {
-                fs.unlink(`${galleryPath}${old}`, function(err) {
-                    if(err && err.code == 'ENOENT') {
-                        console.log("File doesn't exist, won't remove it.");
-                    } else if (err) {
-                        console.error("Error occurred while trying to remove file");
-                    } else {
-                        console.info(`removed`);
-                    }
-                });
-            })
+            // const oldGallery = req.vendor.file.split(',');
+            // oldGallery.forEach(old => {
+            //     fs.unlink(`${galleryPath}${old}`, function(err) {
+            //         if(err && err.code == 'ENOENT') {
+            //             console.log("File doesn't exist, won't remove it.");
+            //         } else if (err) {
+            //             console.error("Error occurred while trying to remove file");
+            //         } else {
+            //             console.info(`removed`);
+            //         }
+            //     });
+            // })
             let vendor = await db.pocRegistration.findByPk(req.vendor.id);
             vendor = vendor.getValues();
             let files = await vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`);
@@ -255,6 +262,44 @@ exports.updateGallery = async (req, res) => {
             message: "Error while updating gallery."
         });
     });  
+}
+
+exports.removeGallery = async (req, res) => {
+    let id = req.params.id
+    let fileToRemove = req.vendor.file.split(',').filter(f => f == id)
+    if(fileToRemove.length == 0){
+        return res.status(503).send({
+            success: false,
+            message: "No file found to delete"
+        })
+    }
+
+    // Delete old files.
+    fileToRemove.forEach(old => {
+        fs.unlink(`${galleryPath}${old}`, function(err) {
+            if(err && err.code == 'ENOENT') {
+                console.log("File doesn't exist, won't remove it.");
+            } else if (err) {
+                console.error("Error occurred while trying to remove file");
+            } else {
+                console.info(`removed`);
+            }
+        });
+    })
+    let galleryFiles = req.vendor.file.split(',').filter(f => f != id)
+    await Vendor.update({file: galleryFiles.join(',')}, {
+        where: {
+            id: req.vendor.id
+        }
+    });
+    let vendor = await db.pocRegistration.findByPk(req.vendor.id);
+    vendor = vendor.getValues();
+    let files = await vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`);
+    return res.status(200).send({
+        success: true,
+        message: "Gallery Item Removed successfully!",
+        files: files
+    });
 }
 
 exports.termsAndConditions = async (req, res) => {
