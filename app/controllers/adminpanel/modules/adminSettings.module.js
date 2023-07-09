@@ -131,7 +131,7 @@ exports.updatePolicyContent = async (req, res) => {
         message: "Invalid id"
     })
 }
-
+// Bloc user's tree 
 exports.blockManagement = async (req, res) => {
     let user_id = req.params.user_id
     let body = req.body
@@ -264,6 +264,7 @@ exports.blockManagement = async (req, res) => {
     })
 }
 
+// bloc user's withdraw.
 exports.userWithdrawBlock = async (req, res) => {
     let user_id = req.params.user_id
     let body = req.body

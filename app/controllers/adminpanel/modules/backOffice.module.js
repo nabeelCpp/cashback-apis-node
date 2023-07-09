@@ -4,6 +4,7 @@ const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');
 const config = require("../../../config/auth.config");
 var jwt = require("jsonwebtoken");
+// used for one click login for user from adminn panel
 exports.memberAuth = async (req, res) => {
     let user_id = req.params.user_id
     let user = await User.findOne({
@@ -35,7 +36,7 @@ exports.memberAuth = async (req, res) => {
     });
 }
 
-
+// used for one click login for vendor from adminn panel
 exports.vendorAuth = async (req, res) => {
     let user_id = req.params.user_id
     let user = await pocRegistration.findOne({
