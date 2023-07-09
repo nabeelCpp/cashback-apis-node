@@ -142,7 +142,7 @@ exports.unPaidLevelBonus = async (req, res) => {
     return res.send(response)
 }
 
-
+// cofounder income paid
 exports.paidCofounderIncome = async (req, res) => {
     let records = await creditDebit.findAll({
         where: {
@@ -188,7 +188,7 @@ exports.paidCofounderIncome = async (req, res) => {
     response.data = data
     return res.send(response)
 }
-
+// Un paid co founder income
 exports.unPaidCofounderIncome = async (req, res) => {
     let records = await creditDebit.findAll({
         where: {

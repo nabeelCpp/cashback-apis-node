@@ -73,6 +73,7 @@ exports.update = async (req, res) => {
     });
 }
 
+// bank info update
 exports.updateBankInfo = async (req, res) => {
     const user = req.user;
     const {acc_name,bank_nm ,branch_nm, ac_no, swift_code, bank_state } = req.body;
@@ -124,6 +125,7 @@ exports.updatePassword = async (req, res) => {
     })
 }
 
+// update user image.
 exports.updateImage = async (req, res) => {
     const logosPath = `${process.env.PROJECT_DIR}/userpanel/images/`;
     const storageLogo =   multer.diskStorage({  

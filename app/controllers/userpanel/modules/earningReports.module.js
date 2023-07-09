@@ -1,6 +1,8 @@
 const db = require("../../../models");
 const {creditDebit, User} = db;
 const Op = db.Sequelize.Op;
+
+// list of level income.
 exports.levelIncome = async (req, res) => {
     const credits = await creditDebit.findAll({
         where: {
@@ -39,6 +41,7 @@ exports.levelIncome = async (req, res) => {
     return res.status(200).send(data);
 }
 
+// listof co founder income
 exports.coFounderIncome = async (req, res) => {
     const credits = await creditDebit.findAll({
         where: {

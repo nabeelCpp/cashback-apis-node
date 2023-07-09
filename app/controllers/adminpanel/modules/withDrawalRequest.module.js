@@ -4,6 +4,8 @@ const fs = require('fs');
 const Op = db.Sequelize.Op;
 const {pocRegistration, matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription, dueClearRequest, pucCreditDebit, creditDebit, eshopPurchaseDetail, venderServices, pocRegisterDetails, withdrawRequest} = db;
 const publicController = require('../../public.controller');
+
+// Withdraw request with status 0
 exports.open = async (req, res) => {
     let requests = await withdrawRequest.findAll({
         where: {
@@ -14,7 +16,7 @@ exports.open = async (req, res) => {
     return res.send(requests)
 }
 
-
+// Withdraw request with status 1
 exports.close = async (req, res) => {
     let requests = await withdrawRequest.findAll({
         where: {
@@ -25,6 +27,7 @@ exports.close = async (req, res) => {
     return res.send(requests)
 }
 
+// Submit withdraw request.
 exports.save = async (req, res) => {
    let body = req.body
    body.list.forEach(async b => {

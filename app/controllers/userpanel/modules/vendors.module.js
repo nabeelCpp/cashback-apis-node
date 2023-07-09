@@ -1,6 +1,7 @@
 const db = require("../../../models");
 const {venderServices, pocRegistration, pocRegisterDetails} = db;
 const Op = db.Sequelize.Op;
+// export all vendors
 module.exports = async (req, res) => {
     let vendors = await venderServices.findAll();
     let companies = await pocRegistration.findAll({

@@ -43,12 +43,14 @@ exports.index = async (req, res) => {
     res.send(data)
 };
 
+// vendor profile
 exports.profile = async (req, res) => {
     req.vendor.cmp_logo = req.vendor.cmp_logo?`${process.env.BASE_URL}/uploads/cmplogo/${req.vendor.cmp_logo}`:'';
     req.vendor.file = await req.vendor.file.split(',').map(f => `${process.env.BASE_URL}/uploads/${f}`);
     return res.status(200).send(req.vendor);
 }
 
+// update vendor profile
 exports.updateProfile = async (req, res) => {
     const vendor = req.vendor;
     let data = {
@@ -82,6 +84,7 @@ exports.updateProfile = async (req, res) => {
     }
 }
 
+// update vendor bank details
 exports.updateBank = async (req, res) => {
     const vendor = req.vendor;
     let data = {
@@ -109,6 +112,7 @@ exports.updateBank = async (req, res) => {
     }
 }
 
+// update vendor's logo
 exports.updateLogo = async (req, res) => {
     const storage =   multer.diskStorage({  
         destination:  (req, file, callback) => {  
@@ -173,7 +177,7 @@ exports.updateLogo = async (req, res) => {
     });  
 }
 
-
+// update gallery of vendor
 exports.updateGallery = async (req, res) => {
     const storage =   multer.diskStorage({  
         destination:  (req, file, callback) => {  
@@ -264,6 +268,7 @@ exports.updateGallery = async (req, res) => {
     });  
 }
 
+// remove gallery items
 exports.removeGallery = async (req, res) => {
     let id = req.params.id
     let fileToRemove = req.vendor.file.split(',').filter(f => f == id)

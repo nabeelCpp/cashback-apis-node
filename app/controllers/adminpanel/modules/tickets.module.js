@@ -6,6 +6,7 @@ const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');
 const profileImagePath = `${process.env.PROJECT_DIR}/images/`;
 var bcrypt = require("bcrypt");
+// All tickets saved to db or specific ticket with id
 exports.index = async (req, res) => {
     let id = req.params?.id
     let tickets = !id ? await Tickets.findAll({
@@ -16,7 +17,7 @@ exports.index = async (req, res) => {
     return res.send(tickets||{})
 }
 
-
+// Tickets with status 1 ie they are checked
 exports.closedTickets = async (req, res) => {
     let id = req.params?.id
     let tickets = !id ? await Tickets.findAll({
@@ -27,6 +28,7 @@ exports.closedTickets = async (req, res) => {
     return res.send(tickets||{})
 }
 
+// Response on ticket after its checked by admin
 exports.saveResponse = async (req, res) => {
     let id = req.params.id
     let ticket = await Tickets.findByPk(id)
@@ -53,6 +55,7 @@ exports.saveResponse = async (req, res) => {
     })
 }
 
+// destroy ticket
 exports.deleteTicket = async (req, res) => {
     let id = req.params.id
     let ticket = await Tickets.findByPk(id)

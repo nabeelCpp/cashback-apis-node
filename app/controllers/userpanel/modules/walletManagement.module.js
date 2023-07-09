@@ -3,6 +3,8 @@ const {finalEWallet, creditDebit, User, withdrawRequest} = db;
 const Op = db.Sequelize.Op;
 var bcrypt = require("bcrypt");
 const publicController = require('../../public.controller')
+
+// List of transactions done by logged in user.
 exports.transactionHistory = async (req, res) => {
     const wallet = await finalEWallet.findOne({
         where: {
@@ -41,6 +43,7 @@ exports.transactionHistory = async (req, res) => {
     });
 }
 
+// logged in user's wallet
 exports.myWallet = async (req, res) => {
     const wallet = await finalEWallet.findOne({
         where: {
@@ -51,6 +54,7 @@ exports.myWallet = async (req, res) => {
     return res.status(200).send(wallet)
 } 
 
+// withdraw requests
 exports.withdrawRequest = async (req, res) => {
     let user = req.user
     const bank = await User.findOne({
@@ -75,6 +79,8 @@ exports.withdrawRequest = async (req, res) => {
         swiftCode: bank.swift_code,
     })
 }
+
+// check while changing user's password  
 exports.checkPassword = async (req, res) => {
     let body = req.body
     let user = await User.findByPk(req.user.id)
@@ -105,6 +111,7 @@ exports.checkPassword = async (req, res) => {
     })
 }
 
+// submit withdraw request
 exports.submitWithdrawal = async (req, res) => {
     let body = req.body
     let user = req.user
@@ -175,6 +182,7 @@ exports.submitWithdrawal = async (req, res) => {
     })
 }
 
+// list of all withdrawal requests.
 exports.myWithdrawalRequests = async (req, res) => {
     const withdraw_request = await withdrawRequest.findAll({
         where: {

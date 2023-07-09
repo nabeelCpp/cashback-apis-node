@@ -5,6 +5,8 @@ const Op = db.Sequelize.Op;
 const publicController = require("../../public.controller");
 const multer = require("multer");
 const payDuesProofPath = `${process.env.PROJECT_DIR}/franchisepanel/images/`;
+
+// all invoice belongs to logged in vendor
 exports.invoices = async (req, res) => {
     const data = [];
     const invoices = await amountDetail.findAll({
@@ -26,6 +28,7 @@ exports.invoices = async (req, res) => {
     return res.status(200).send(data);
 }
 
+// view single invoice
 exports.viewInvoice = async (req, res) => {
     let invoice_no = req.params.invoice_number;
     invData = await amountDetail.findOne({
@@ -66,6 +69,8 @@ exports.viewInvoice = async (req, res) => {
     return res.send(invData)
 }
 
+
+// Dues report
 exports.duesReport = async (req, res) => {
     const data = [];
     const report = await dueClearRequest.findAll({
@@ -87,6 +92,7 @@ exports.duesReport = async (req, res) => {
     return res.send(data)
 }
 
+// generate invoice
 exports.generateInvoice = async (req, res) => {
     const body = req.body;
     let gst = 0,gstPercent=0, tax = 0;
@@ -475,6 +481,7 @@ exports.generateInvoice = async (req, res) => {
     })
 }
 
+// check if user exist or not with user id 
 exports.checkUser  = async (req, res) => {
     let user_id = req.params.user_id;
     const user = await User.findOne({
@@ -500,6 +507,7 @@ exports.checkUser  = async (req, res) => {
 }
 
 
+// pay dues api
 exports.payDues  = async (req, res) => {
     let body = req.body
     let checkDueAmount = await pocRegistration.findOne({
@@ -544,6 +552,7 @@ exports.payDues  = async (req, res) => {
     }
 }
 
+// upload proof ie image
 exports.payDuesProof  = async (req, res) => {
     let id = req.params.id;
     const storage =   multer.diskStorage({  
@@ -596,6 +605,7 @@ exports.payDuesProof  = async (req, res) => {
     });  
 }
 
+// return details of user if exists
 exports.checkUserId = async (req, res) => {
     let userid = req.params.userid
     let user = await User.findOne({
@@ -623,6 +633,7 @@ exports.checkUserId = async (req, res) => {
 }
 
 
+// Check invoice no already in use or not.
 exports.checkInvoice = async (req, res) => {
     let invoice = req.params.invoice
     let invoices = await amountDetail.count({

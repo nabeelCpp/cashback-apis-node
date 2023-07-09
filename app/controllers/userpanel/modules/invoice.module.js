@@ -1,6 +1,8 @@
 const db = require("../../../models");
 const {lifejacketSubscription, statusMaintenance, amountDetail, pocRegistration} = db;
 const Op = db.Sequelize.Op;
+
+// purchase of package.
 exports.myPackagePurchase = async (req, res) => {
     let arr = await lifejacketSubscription.findAll({
         where: {
@@ -26,6 +28,7 @@ exports.myPackagePurchase = async (req, res) => {
     return res.status(200).send(data);
 }
 
+// all invoices from vendor.
 exports.myShoppingInvoices = async (req, res) => {
     const arr = await amountDetail.findAll({
         where : {

@@ -2,6 +2,8 @@ const db = require("../../../models");
 const {User, finalEWallet, statusMaintenance, amountDetail, creditDebit,  closingCreditDebit} = db;
 const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');
+
+// payout list
 exports.generatePayoutList = async (req, res) => {
     let users = await User.findAll({
         order: [
@@ -73,6 +75,7 @@ exports.generatePayoutList = async (req, res) => {
     return res.send(response)
 }
 
+// Generate payout
 exports.generatePayout = async (req, res) => {
     let body = req.body
     body.list.forEach(async (id) => {

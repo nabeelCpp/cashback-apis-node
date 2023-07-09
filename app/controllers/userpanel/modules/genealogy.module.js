@@ -1,6 +1,8 @@
 const db = require("../../../models");
 const {User, lifejacketSubscription, manageBvHistory, levelIncomeBinary, matrixDownline} = db;
 const Op = db.Sequelize.Op;
+
+// tree view of logged in user and search based on user id in down members
 exports.treeView = async (req, res) => {
     const data = {};
     var loggedInUser = req.user.user_id;
@@ -107,6 +109,7 @@ exports.treeView = async (req, res) => {
     return res.status(200).send(data);
 };
 
+// downline members of logged in user
 exports.downlineMembers = async (req, res) => {
     const [results, metadata] = await db.sequelize.query(
         `SELECT matrix_downline.down_id,matrix_downline.income_id,matrix_downline.level,
@@ -129,6 +132,7 @@ exports.downlineMembers = async (req, res) => {
     return res.status(200).send(results);
 }
 
+// direct members of logged in user.
 exports.directMembers = async (req, res) => {
     const users = await User.findAll({
         where : {

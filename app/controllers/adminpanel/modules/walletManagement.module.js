@@ -2,6 +2,8 @@ const db = require("../../../models");
 const {User, finalEWallet, creditDebit} = db;
 const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');
+
+// Users wallet
 exports.users = async (req, res) => {
     let users = await User.findAll({
         order: [
@@ -21,6 +23,7 @@ exports.users = async (req, res) => {
     return res.send(users);
 }
 
+// Add or subtract from user wallet
 exports.manage = async (req, res) => {
     let body = req.body
     if(body.amount <= 0){
@@ -79,6 +82,7 @@ exports.manage = async (req, res) => {
     })
 }
 
+// wallet history of users
 exports.ewalletHistory = async (req, res) => {
     let user_id = req.params.user_id
     // check if user exist or not
