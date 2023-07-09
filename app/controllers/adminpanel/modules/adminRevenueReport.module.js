@@ -1,11 +1,14 @@
 const db = require("../../../models");
 const { amountDetail, creditDebit, pocRegistration} = db;
 const Op = db.Sequelize.Op;
+// Endpoint is used to find all the commision details within dates range.
 module.exports = async (req, res) => {
+    // Getting body from request
     let body = Object.keys(req.body).length === 0?'':req.body
     let commisions = []
     if(body){
         if(body.user_id && body.date_from && body.date_to){
+            // finding commision details.
             commisions = await amountDetail.findAll({
                 where: {
                     seller_id: body.user_id,
@@ -15,6 +18,7 @@ module.exports = async (req, res) => {
                 }
             });
         }else if(body.user_id && body.date_from){
+            // finding commision details.
             commisions = await amountDetail.findAll({
                 where: {
                     seller_id: body.user_id,
@@ -24,6 +28,7 @@ module.exports = async (req, res) => {
                 }
             });
         }else if(body.user_id &&  body.date_to){
+            // finding commision details.
             commisions = await amountDetail.findAll({
                 where: {
                     seller_id: body.user_id,
@@ -33,6 +38,7 @@ module.exports = async (req, res) => {
                 }
             });
         }else if(body.user_id){
+            // finding commision details.
             commisions = await amountDetail.findAll({
                 where: {
                     seller_id: body.user_id
@@ -40,7 +46,6 @@ module.exports = async (req, res) => {
             });
         }
     }else{
-        console.log('asasd')
         commisions = await amountDetail.findAll();
     }
     let data = [];

@@ -1,6 +1,7 @@
 const multer = require("multer");
 const db = require("../../../models");
 const fs = require('fs');
+// Initializing model instances 
 const {Admin, User, contactDetail, levelIncomeBinary} = db;
 const Op = db.Sequelize.Op;
 const publicController = require('../../public.controller');

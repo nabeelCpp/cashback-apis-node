@@ -3,6 +3,7 @@ const Op = db.Sequelize.Op;
 const {oldUserNames,matrixDownline, User, amountDetail, finalEWallet, levelEWallet, statusMaintenance, lifejacketSubscription, manageBvHistory} = db;
 const publicController = require('../../public.controller');
 var bcrypt = require("bcrypt");
+// Fetching members list
 exports.list = async (req, res) => {
     const data = [];
     const firstLevelMembers = await matrixDownline.findAll({
@@ -14,7 +15,7 @@ exports.list = async (req, res) => {
     });
     const coFounders = firstLevelMembers.map(fl => fl.down_id);
     const members = await User.findAll({
-        attributes: ["user_id", "user_plan","username", "first_name", "last_name", "email", "telephone", "ref_id", "country", "id", "co_founder", "user_status"],
+        attributes: ["user_id", "user_plan","username", "first_name", "last_name", "email", "telephone", "ref_id", "country", "id", "co_founder", "user_status", "registration_date"],
         order: [
             ['id', 'desc']
         ]
@@ -41,7 +42,7 @@ exports.list = async (req, res) => {
     }
     return res.status(200).send(data);
 }
-
+// Fetching single member
 exports.singleList = async (req, res) => {
     let id = req.params.id;
     let user = await User.findByPk(id, {
@@ -63,7 +64,7 @@ exports.singleList = async (req, res) => {
     user.sponsorName = `${sponsor.first_name} ${sponsor.last_name}`;
     return res.send(user);
 }
-
+// Updating member details.
 exports.update = async (req, res) => {
     let body = req.body;
     let message = "";
@@ -80,11 +81,13 @@ exports.update = async (req, res) => {
         where: where
     });
     if(!checkUser){
+        // Fetching user based on user_id if not found
         return res.status(404).send({
             success: false,
             message: "User not found!"
         });
     }
+    // action inside body means which status to update, either cofounder or user login status.
     if(body.action == 'update-cofounder-status'){
         try {
             User.update({
@@ -114,7 +117,7 @@ exports.update = async (req, res) => {
             return publicController.errorHandlingFunc(req, res, error.message);
         }
     }
-
+    // Update basic profile details
     if(body.action == 'update-profile'){
         let id = req.params.id;
         try {
@@ -170,7 +173,7 @@ exports.update = async (req, res) => {
         message: message
     });
 }
-
+// Create user.
 exports.create = async (req, res) => {
     statusMaintenance.findByPk(req.body.platform).then(async (planData)=>{
         if(planData){
@@ -355,7 +358,7 @@ exports.create = async (req, res) => {
         return publicController.errorHandlingFunc(req, res, error.message);
     });
 }
-
+// Fetch tree based on user id.
 exports.genealogy = async (req, res) => {
     const data = {};
     let memberId = req.params.member_id;
@@ -392,7 +395,7 @@ exports.genealogy = async (req, res) => {
     return res.status(200).send(data);
 
 }
-
+// Transfer balance to user.
 exports.topup = async (req, res) => {
   let user_id = req.params.member_id
   let body = req.body

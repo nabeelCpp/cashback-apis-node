@@ -15,6 +15,7 @@ module.exports = function(app) {
     router.use([authJwt.verifyToken, authJwt.isUser]);
     router.get("/", userController.userPanel);
     router.get("/upgrade/plan", userController.upgradePackage.upgradePlan);
+    router.get("/upgrade/plan/(:package)/(:pay_mode)", userController.upgradePackage.subscribeNewPlan);
     router.get("/plan/history", userController.upgradePackage.planHistory);
     router.get("/wallet-mgt/transactions", userController.walletManagement.transactionHistory);
     router.get("/wallet-mgt/mywallet", userController.walletManagement.myWallet);

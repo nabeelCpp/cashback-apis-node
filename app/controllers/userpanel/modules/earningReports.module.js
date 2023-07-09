@@ -59,14 +59,17 @@ exports.coFounderIncome = async (req, res) => {
             attributes: ['user_id', 'first_name', 'last_name']
         });
         const temp = {
+            sn: i+1,
             user_id: user.user_id,
             first_name: user.first_name,
             last_name: user.last_name,
-            last_name: user.last_name,
+            full_name: user.first_name+' '+user.last_name,
             investment: credit.Remark,
             percentage: credit.Cause,
-            amount: credit.credit_amt,
+            credit_amt: credit.credit_amt,
             invoice: credit.product_name,
+            remark: credit.Cause,
+            invoice_no: credit.product_name,
             date: credit.ts,
             status: credit.status == 1 ? "PAID": "UNPAID"
         }

@@ -14,7 +14,7 @@ var bcrypt = require("bcrypt");
 
 
 
-
+// Fetch all vendors list.
 exports.list = async (req, res) => {
     let vendors = await pocRegistration.findAll({
         where: {
@@ -33,7 +33,7 @@ exports.list = async (req, res) => {
     }
     return res.send(vendors);
 }
-
+// Fetch single vendor.
 exports.singleList = async (req, res) => {
     let vendor = await pocRegistration.findByPk(req.params.id, {
         attributes: {exclude: ['password']},
@@ -42,7 +42,7 @@ exports.singleList = async (req, res) => {
     vendor.cmp_logo = vendor.cmp_logo?`${process.env.BASE_URL}/uploads/cmplogo/${vendor.cmp_logo}`:'';
     return res.send(vendor);
 }
-
+// Update vendor details.
 exports.update = async (req, res) => {
     let body = req.body;
     let message = "";
@@ -64,6 +64,7 @@ exports.update = async (req, res) => {
             message: "Vendor not found!"
         });
     }
+    // Update vendor status, action will be sent within body.
     if(req.body.action == 'update-status'){
         try {
             pocRegistration.update({
@@ -78,7 +79,7 @@ exports.update = async (req, res) => {
             return publicController.errorHandlingFunc(req, res, error.message);
         }
     }
-
+    // Update basic details of user.
     if(body.action == 'update-profile'){
         let id = req.params.id;
         try {
@@ -119,7 +120,7 @@ exports.update = async (req, res) => {
             return publicController.errorHandlingFunc(req, res, error.message);
         }
     }
-
+    // Update bank info od vendor
     if(body.action == 'update-bankinfo'){
         const editAbles = ["acc_name","ac_no","bank_nm","branch_nm","swift_code"];
         try {
@@ -143,7 +144,7 @@ exports.update = async (req, res) => {
         message: message
     });
 }
-
+// Update gallery of vendor
 exports.updateGallery = async (req, res) => {
     let user = await pocRegistration.findByPk(req.params.id);
     if(!user){
@@ -230,7 +231,7 @@ exports.updateGallery = async (req, res) => {
         });
     });
 }
-
+//Logo update.
 exports.updateLogo = async (req, res) => {
     let user = await pocRegistration.findByPk(req.params.id);
     if(!user){
@@ -298,7 +299,7 @@ exports.updateLogo = async (req, res) => {
         });
     });  
 }
-
+// Create vendor.
 exports.create = async (req, res) => {
     let body = req.body;
     try {
@@ -359,7 +360,7 @@ exports.create = async (req, res) => {
         return publicController.errorHandlingFunc(req, res, error.message);
     }
 }
-
+// Report for payment requests.
 exports.paymentRequestReport = async (req, res) => {
     let reports = await dueClearRequest.findAll({
         order: [
@@ -388,7 +389,7 @@ exports.paymentRequestReport = async (req, res) => {
     }
     return res.send(data)
 }
-
+// Approve payment request.
 exports.approvePaymentRequest = async (req, res) => {
     let status = req.params.status
     let id = req.params.id
@@ -480,7 +481,7 @@ exports.approvePaymentRequest = async (req, res) => {
         message: "Error occured while clearig request"
     })
 }
-
+// Reject payment request.
 exports.rejectPaymentRequest = async (req, res) => {
     let id = req.params.id
     let body = req.body
@@ -505,7 +506,7 @@ exports.rejectPaymentRequest = async (req, res) => {
         message: "invalid id"
     })
 }
-
+// Report for all sales
 exports.salesReport = async (req, res) => {
     let records = await pucCreditDebit.findAll({
         where: {
@@ -558,7 +559,7 @@ exports.salesReport = async (req, res) => {
     return res.send(response)
 }
 
-
+// Fetch single sales report.
 exports.salesReportSingle = async (req, res) => {
     let user_id = req.params.user_id
     let vendor = await pocRegistration.findOne({
@@ -603,7 +604,7 @@ exports.salesReportSingle = async (req, res) => {
     response.data = data
     return res.send(response)
 }
-
+// Vendor invoice.
 exports.vendorInvoices = async (req, res) => {
     let invoices = await amountDetail.findAll({
         order: [
@@ -635,7 +636,7 @@ exports.vendorInvoices = async (req, res) => {
     response.data = data
     return res.send(response)
 }
-
+// Invoice based on invoice no
 exports.vendorInvoice = async (req, res) => {
     let invoice_no = req.params.invoice_no
     let detail = await amountDetail.findOne({
@@ -714,7 +715,7 @@ exports.deleteService = async (req, res) => {
         services: services
     })
 }
-
+// create Service 
 exports.createService = async (req, res) => {
     let body = req.body
     try {
@@ -732,7 +733,7 @@ exports.createService = async (req, res) => {
         services: services
     })
 }
-
+// list of all vendors saved in our system
 exports.ourVendors = async (req, res) =>  {
     let vendors = await venderServices.findAll();
     let companies = await pocRegistration.findAll({
@@ -754,7 +755,7 @@ exports.ourVendors = async (req, res) =>  {
         companies: companies
     })
 }
-
+// Vendor history.
 exports.ourVendorsHistory = async (req, res) => {
     let user_id = req.params.user_id
     let details = await amountDetail.findAll({

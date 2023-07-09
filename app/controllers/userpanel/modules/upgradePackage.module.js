@@ -1,5 +1,6 @@
 const db = require("../../../models");
-const {statusMaintenance, lifejacketSubscription} = db;
+const {statusMaintenance, lifejacketSubscription, User} = db;
+const publicController = require('../../../controllers/public.controller')
 const Op = db.Sequelize.Op;
 exports.upgradePlan = async (req, res) => {
     const response = [];
@@ -49,7 +50,53 @@ exports.planHistory = async(req, res) => {
 }
 
 exports.subscribeNewPlan = async (req, res) => {
+  let package = req.params.package
+  let user = req.user
+  let checkPackage = await statusMaintenance.findByPk(package)
+  if(!checkPackage){
+    return res.status(500).send({
+      success: false,
+      message: 'Something went wrong! Try again!'
+    })
+  }
+  let rand = await publicController.makeidNumeric(7)
+  let invoiceNo = user.user_id+rand
+  const expireDate = new Date();
+  expireDate.setDate(expireDate.getDate() + 7300);
+  let insertArr = {
+    user_id: user.user_id, 
+    package: package, 
+    amount: checkPackage.amount, 
+    pay_type: 'E Wallet', 
+    pin_no: '123456', 
+    transaction_no: invoiceNo, 
+    date: new Date().toISOString().split('T')[0], 
+    expire_date: expireDate, 
+    remark: 'Package Purchase', 
+    ts: `${new Date().toISOString().split('T')[0]} ${new Date().toISOString().split('T')[1].replace('Z', '')}`, 
+    status: 'Active', 
+    invoice_no: invoiceNo,
+    lifejacket_id: `LJ${invoiceNo}`,
+    username: user.user_id,
+    sponsor: user.ref_id,
+    pb: checkPackage.capping
+  }
+  try {
+    await lifejacketSubscription.create(insertArr)
+    await User.update({
+      user_plan: package,
+      designation: 'Paid User',
+      user_rank_name: 'user_rank_name'
+    }, {
+      where: {
+        user_id: user.user_id
+      }
+    })
+  } catch (error) {
+    return publicController.errorHandlingFunc(req, res, error.message);
+  }
   return res.send({
-    message: true
+    success: true,
+    message: "You have successfully subscribed to new package!"
   })
 }

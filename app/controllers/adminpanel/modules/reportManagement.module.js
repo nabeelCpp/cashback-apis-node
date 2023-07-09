@@ -95,7 +95,7 @@ exports.paidLevelBonus = async (req, res) => {
     response.data = data
     return res.send(response)
 }
-
+// un paid level bonus
 exports.unPaidLevelBonus = async (req, res) => {
     let records = await creditDebit.findAll({
         where: {

@@ -28,6 +28,7 @@ exports.memberAuth = async (req, res) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+            co_founder: user.co_founder,
             image: user.image&&`${process.env.BASE_URL}/userpanel/images/${user.image}`,
             accessToken: token
         }
