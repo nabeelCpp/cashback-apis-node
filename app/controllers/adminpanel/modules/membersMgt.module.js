@@ -495,3 +495,30 @@ exports.topup = async (req, res) => {
     })
   }
 }
+
+// return details of user if exists
+exports.checkUserId = async (req, res) => {
+  let userid = req.params.userid
+  let user = await User.findOne({
+      where: {
+          [Op.or]: [
+              {
+                  user_id: userid
+              },
+              {
+                  username: userid
+              }
+          ]
+      }
+  })
+  if(!user){
+      return res.status(404).send({
+          success: false,
+          message: "Invalid userid"
+      })
+  }
+  return res.send({
+      success: true,
+      name: user.first_name+' '+user.last_name
+  })
+}

@@ -173,28 +173,27 @@ module.exports = async(req, res) => {
     // Graphs
 
     // For members
-    const members = (where) => {
-        return User.count({ 
-          where: where
-        }).then(resp=>{
-          if(resp){
-            return resp;
-          }
-          return 0;        
-        })
-    }
+    
 
     let currentYear = new Date().getFullYear();
     const registeredMembersThisYear = {};
     for (let i = 1; i <= 12; i++) {
-        let from = `${currentYear}-${i}-01`;
-        let to = `${currentYear}-${i}-31`;
-        let temp = await members({
-            registration_date: {
-                [Op.gte] : from,
-                [Op.lte] : to
+        let from = `${currentYear}-${('0' + i).slice(-2)}-01`;
+        let to = `${currentYear}-${('0' + i).slice(-2)}-31`;
+        let temp = await User.count({
+            where: {
+                registration_date: {
+                    [Op.gte] : from,
+                    [Op.lte] : to
+                }
             }
-        });
+        })
+        // let temp = await members({
+        //     registration_date: {
+        //         [Op.gte] : from,
+        //         [Op.lte] : to
+        //     }
+        // });
         let month = new Date(from).toLocaleString('default', {month: 'long'});
         registeredMembersThisYear[month] = temp;
         

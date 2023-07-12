@@ -1,4 +1,5 @@
 const publicController = require("../controllers/public.controller");
+const franchiseController = require("../controllers/franchise.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -18,5 +19,6 @@ module.exports = function(app) {
 
     router.get("/packages", publicController.packages);
     router.get("/vendor/services", publicController.vendorServices);
+    router.get("/terms-and-conditions", franchiseController.dashboard.termsAndConditions);
   });
 };

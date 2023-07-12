@@ -106,6 +106,8 @@ module.exports = function(app) {
     // member login via user id
     router.get("/member/login/(:user_id)", adminController.backOffice.memberAuth)
     router.get("/vendor/login/(:user_id)", adminController.backOffice.vendorAuth)
+    // check user id
+    router.get("/checkuser/(:userid)", adminController.membersMgt.checkUserId );
 
   })
 }

@@ -11,7 +11,7 @@ exports.open = async (req, res) => {
         where: {
             status: 0
         },
-        attributes: ['user_id', 'first_name', 'last_name', 'request_amount', 'transaction_number', 'bank_nm', 'acc_number', 'swift_code', 'posted_date']
+        attributes: ['user_id', 'first_name', 'last_name', 'request_amount', 'transaction_number', 'bank_nm', 'acc_number', 'swift_code', 'posted_date', 'id']
     })
     return res.send(requests)
 }

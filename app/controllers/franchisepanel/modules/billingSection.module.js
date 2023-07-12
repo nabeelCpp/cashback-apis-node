@@ -122,6 +122,17 @@ exports.generateInvoice = async (req, res) => {
             message: `${body.user_id} User not found`
         });
     }
+    let invoices = await amountDetail.count({
+        where: {
+            invoice_no: body.invoice_no
+        }
+    })
+    if(invoices){
+        return res.status(500).send({
+            success: false,
+            message: `Invoice number ${body.invoice_no} already in use`
+        })
+    }
     let grandTotal = 0;
     body.products.forEach(async (product) => {
         let netPrice = product.price * product.qty;
@@ -198,8 +209,8 @@ exports.generateInvoice = async (req, res) => {
     // }
 
     try {
-        pocRegistration.update({
-            due_amount: `due_amount+${adminCommision}`
+        await pocRegistration.update({
+            due_amount: db.Sequelize.literal(`due_amount+${adminCommision}`)
         },{
             where: {
                 user_id: req.vendor.user_id
@@ -214,7 +225,7 @@ exports.generateInvoice = async (req, res) => {
     }
 
     try {
-        amountDetail.create({
+        await amountDetail.create({
             user_id: user.user_id,
             seller_id: req.vendor.user_id,
             total_invoice_cv: grandTotal,
@@ -628,7 +639,7 @@ exports.checkUserId = async (req, res) => {
     }
     return res.send({
         success: true,
-        name: user.username
+        name: user.first_name+' '+user.last_name
     })
 }
 

@@ -2,6 +2,8 @@ const db = require("../../../models");
 const {statusMaintenance, lifejacketSubscription, User} = db;
 const publicController = require('../../../controllers/public.controller')
 const Op = db.Sequelize.Op;
+
+// Upgrade to new plans
 exports.upgradePlan = async (req, res) => {
     const response = [];
     var existingPlan = 0;
@@ -33,6 +35,7 @@ exports.upgradePlan = async (req, res) => {
     return res.status(200).send(plans);
 };
 
+// List of plans history of logged in user.
 exports.planHistory = async(req, res) => {
     const plans = await lifejacketSubscription.findAll({
         where: {
@@ -49,6 +52,7 @@ exports.planHistory = async(req, res) => {
     return res.status(200).send(plans);
 }
 
+// Subscribe new plan and save upgrades to user in db
 exports.subscribeNewPlan = async (req, res) => {
   let package = req.params.package
   let user = req.user

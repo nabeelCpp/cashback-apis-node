@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
       where : { 
         user_id: req.user.user_id,
         purchase_date: {
-          [Op.between]:[`${curDate.getFullYear}-${curDate.getMonth()+1}-01`, `${curDate.getFullYear}-${curDate.getMonth()+2}-01`],
+          [Op.between]:[`${curDate.getFullYear()}-${curDate.getMonth()+1}-01`, `${curDate.getFullYear()}-${curDate.getMonth()+2}-01`],
         }
       } });
     const totalSale = await amountDetail.sum('total_invoice_cv', { where : { user_id: req.user.user_id } });
